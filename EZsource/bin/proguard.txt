@@ -1,0 +1,9 @@
+# view AndroidManifest.xml #generated:31
+-keep class com.example.ezsource.AccountActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:16
+-keep class com.example.ezsource.MainActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:25
+-keep class com.example.ezsource.TransactionActivity { <init>(...); }
+
