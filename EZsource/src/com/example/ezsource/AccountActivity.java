@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -87,6 +88,8 @@ public class AccountActivity extends Activity {
         try {
           // File's binary content
           java.io.File fileContent = new java.io.File(fileUri.getPath());
+          
+          
           FileContent mediaContent = new FileContent("image/jpeg", fileContent);
 
           // File's metadata.
@@ -95,11 +98,29 @@ public class AccountActivity extends Activity {
           body.setMimeType("image/jpeg");
 
           File file = service.files().insert(body, mediaContent).execute();
+          
+//          File body = new File();
+//          body.setTitle("My document");
+//          body.setDescription("A test document");
+//          body.setMimeType("text/plain");
+//          
+//          String path = Environment.getExternalStorageDirectory().getPath();
+//	//	  File file = new File(path + "/Ezsource/UserMaster");
+//          java.io.File fileContent1 = new java.io.File(path + "/a.txt");
+//          FileContent mediaContent = new FileContent("text/plain", fileContent1);
+
+//          File file = service.files().insert(body, mediaContent).execute();
           if (file != null) {
             showToast("Photo uploaded: " + file.getTitle());
+            Log.e("ysy", "uploaded");
             startCameraIntent();
           }
+          else {
+        	  showToast("Photo not uploaded: ");
+        	  Log.e("ysy", "notuploaded");
+		}
         } catch (UserRecoverableAuthIOException e) {
+        	e.printStackTrace();
           startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
         } catch (IOException e) {
           e.printStackTrace();
