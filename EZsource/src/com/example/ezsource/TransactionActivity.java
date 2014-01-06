@@ -28,6 +28,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.method.DigitsKeyListener;
@@ -46,6 +47,10 @@ import com.example.source.Cargo;
 import com.example.source.CustomerMasterfile;
 import com.example.source.Output;
 import com.example.source.UserMaster;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 
 public class TransactionActivity extends Activity {
 	BluetoothAdapter mBluetoothAdapter;
@@ -73,6 +78,10 @@ public class TransactionActivity extends Activity {
 	String stateshiptocity = null;
 	String stateshiptozip = null;
 //	String statetime = null;
+
+	  static final int REQUEST_ACCOUNT_PICKER = 1;
+	  static final int REQUEST_AUTHORIZATION = 2;
+	  static final int CAPTURE_IMAGE = 3;
 	
 	Semaphore semp = new Semaphore(0);
 	
@@ -89,11 +98,14 @@ public class TransactionActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_transaction);
 	//	state = 1;
-		bluetooth();
+		
+		saveFileToDrive();
+		
+	//	bluetooth();
 
 		ad =new AlertDialog.Builder(this);
 	//	showTimeDialog();
-		enteruserid();
+	//	enteruserid();
 	//	showdialog(state);
 		
 		ListView list =  (ListView)findViewById(R.id.mylistview);
@@ -111,8 +123,55 @@ public class TransactionActivity extends Activity {
 	
 	}
 
+	  private void saveFileToDrive() {
+		    Thread t = new Thread(new Runnable() {
+		      @Override
+		      public void run() {
+		        try {
+		          // File's binary content
+		        	Drive service =AccountActivity.service;
+		          
+		          File body = new File();
+		          body.setTitle("lalala");
+		          body.setDescription("A test document");
+		          body.setMimeType("text/plain");
+		          
+		          String path = Environment.getExternalStorageDirectory().getPath();
+			//	  File file = new File(path + "/Ezsource/UserMaster");
+		          java.io.File fileContent1 = new java.io.File(path + "/b.txt");
+		          FileContent mediaContent = new FileContent("text/plain", fileContent1);
 
-	
+		          File file = service.files().insert(body, mediaContent).execute();
+		          if (file != null) {
+		            showToast("Photo uploaded: " + file.getTitle());
+		            Log.e("ysy", "uploaded");
+		 //           startCameraIntent();
+		          }
+		          else {
+		        	  showToast("Photo not uploaded: ");
+		        	  Log.e("ysy", "notuploaded");
+				}
+		        } catch (UserRecoverableAuthIOException e) {
+		        	Log.e("ysy", "UserRecoverableAuthIOException");
+		        	e.printStackTrace();
+		          startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
+		        } catch (IOException e) {
+		          e.printStackTrace();
+		        }
+		      }
+		    });
+		    t.start();
+		  }
+	  public void showToast(final String toast) {
+		    runOnUiThread(new Runnable() {
+		      @Override
+		      public void run() {
+		        Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
+		      }
+		    });
+		  }
+	  
+	  
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

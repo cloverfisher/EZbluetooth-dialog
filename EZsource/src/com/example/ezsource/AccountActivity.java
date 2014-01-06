@@ -31,7 +31,7 @@ public class AccountActivity extends Activity {
   static final int CAPTURE_IMAGE = 3;
 
   private static Uri fileUri;
-  private static Drive service;
+  public static Drive service;
   private GoogleAccountCredential credential;
 
   @Override
@@ -87,29 +87,29 @@ public class AccountActivity extends Activity {
       public void run() {
         try {
           // File's binary content
-          java.io.File fileContent = new java.io.File(fileUri.getPath());
+//          java.io.File fileContent = new java.io.File(fileUri.getPath());
+//          
+//          
+//          FileContent mediaContent = new FileContent("image/jpeg", fileContent);
+//
+//          // File's metadata.
+//          File body = new File();
+//          body.setTitle(fileContent.getName());
+//          body.setMimeType("image/jpeg");
+//
+//          File file = service.files().insert(body, mediaContent).execute();
           
-          
-          FileContent mediaContent = new FileContent("image/jpeg", fileContent);
-
-          // File's metadata.
           File body = new File();
-          body.setTitle(fileContent.getName());
-          body.setMimeType("image/jpeg");
+          body.setTitle("My document");
+          body.setDescription("A test document");
+          body.setMimeType("text/plain");
+          
+          String path = Environment.getExternalStorageDirectory().getPath();
+	//	  File file = new File(path + "/Ezsource/UserMaster");
+          java.io.File fileContent1 = new java.io.File(path + "/b.txt");
+          FileContent mediaContent = new FileContent("text/plain", fileContent1);
 
           File file = service.files().insert(body, mediaContent).execute();
-          
-//          File body = new File();
-//          body.setTitle("My document");
-//          body.setDescription("A test document");
-//          body.setMimeType("text/plain");
-//          
-//          String path = Environment.getExternalStorageDirectory().getPath();
-//	//	  File file = new File(path + "/Ezsource/UserMaster");
-//          java.io.File fileContent1 = new java.io.File(path + "/a.txt");
-//          FileContent mediaContent = new FileContent("text/plain", fileContent1);
-
-//          File file = service.files().insert(body, mediaContent).execute();
           if (file != null) {
             showToast("Photo uploaded: " + file.getTitle());
             Log.e("ysy", "uploaded");
@@ -120,6 +120,7 @@ public class AccountActivity extends Activity {
         	  Log.e("ysy", "notuploaded");
 		}
         } catch (UserRecoverableAuthIOException e) {
+        	Log.e("ysy", "UserRecoverableAuthIOException");
         	e.printStackTrace();
           startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
         } catch (IOException e) {
