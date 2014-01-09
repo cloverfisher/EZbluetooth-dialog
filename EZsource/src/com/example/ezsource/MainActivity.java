@@ -2,10 +2,14 @@ package com.example.ezsource;
 
 
 
-import java.io.File;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Semaphore;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -27,63 +31,45 @@ import com.example.source.CustomerMasterfile;
 import com.example.source.Output;
 import com.example.source.ReturnableItem;
 import com.example.source.UserMaster;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.Drive.Files;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 
 
 public class MainActivity extends Activity {
 	BluetoothAdapter mBluetoothAdapter;
+	UUID uuid;
+	Semaphore semp = new Semaphore(0);
+	List<UserMaster> umlist = null;
+	List<CustomerMasterfile> cmlist = null;
+	List<AphaseItemTemplate> aitlist = null;
+	List<ReturnableItem> rilist = null;
+	UserMasterDB newDb = new UserMasterDB();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		Toast.makeText(this, "Some message!", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "please hold the bluetooth device for 10 s and then make a transaction!", Toast.LENGTH_LONG).show();
 		creatpath();
-		List<UserMaster> umlist = null;
-		List<CustomerMasterfile> cmlist = null;
-		List<AphaseItemTemplate> aitlist = null;
-		List<ReturnableItem> rilist = null;
+
 
 		setContentView(R.layout.mainactivity);
-		UserMasterDB newDb = new UserMasterDB();
+
 		try {
 			newDb.openDB();
-			//newDb.bla();
+		//	newDb.buildDB();
+		//	newDb.bla();
 			//newDb.checktableExist();
-			
+			newDb.closeDB();
 			//newDb.
 		} catch (Exception e) {
 			// TODO: handle exception
-			Log.e("ysy", "add new db");
+			updatedb();
 			newDb.openDB();
-			newDb.buildDB();
-			 XlsToString xts = new XlsToString();
-			 try {
-				umlist =  xts.catchUsermaster();
-				cmlist = xts.catchCustomermaster();
-				aitlist = xts.catchAphaseItemTemplate();
-				rilist = xts.catchReturnableItem();
-			} catch (Exception ea) {
-				// TODO: handle exception
-			}
-			int umlistsie = umlist.size();
-			int cmlistsize = cmlist.size();
-			int aitlistsize = aitlist.size();
-			int rilistsize = rilist.size();
-			for(int i = 0; i < umlistsie; i++)
-			{
-				newDb.insertUserMasterDB(umlist.get(i));
-			}
-			for(int i = 0;i <  cmlistsize;i++)
-			{
-				newDb.insertCustomerMasterDB(cmlist.get(i));
-			}
-			for(int i=0; i < aitlistsize ; i++)
-			{
-				newDb.insertItemDB(aitlist.get(i));
-			}
-			for(int i = 0; i < rilistsize && i < 300; i++)
-			{
-				newDb.insertReturnableItemDB(rilist.get(i));
-			}
+			newDb.newOutputDB();
+			newDb.closeDB();
+	
 		}
 
 
@@ -121,6 +107,23 @@ public class MainActivity extends Activity {
 		
 		Button btnViewHistory;
 		
+		btnViewHistory = (Button)findViewById(R.id.btnhistory);
+		btnViewHistory.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				ArrayList<String> list =  OutputHistoryPlus();
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, HistoryActivity.class);
+				Bundle bundle = new Bundle();
+				bundle.putStringArrayList("alist", list);
+			//	intent.putExtra("alist", list);
+				intent.putExtras(bundle);
+				startActivity(intent);
+			}
+		});
+		
 	//	btnViewHistroy = (Button)findViewById(R.id.)
 		
 		Button btnBlueTooth;
@@ -130,7 +133,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-
+	//			download();
 			}
 		});
 		
@@ -146,6 +149,17 @@ public class MainActivity extends Activity {
 				
 			}
 		});
+		
+		Button btnDBUpdate;
+		btnDBUpdate = (Button)findViewById(R.id.btndbupdate);
+		btnDBUpdate.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				updatedb();
+			}
+		});
 	}
 	
 	public class Person
@@ -155,7 +169,18 @@ public class MainActivity extends Activity {
 	}
 	
 
-	
+	ArrayList<String> OutputHistoryPlus()
+	{
+		UserMasterDB umdb = new UserMasterDB();
+		umdb.openDB();
+		ArrayList<String> list = umdb.OutputHistory();
+//		for(int i=0;i<list.size();i++)
+//		{
+//			Log.e("ysy", list.get(i));
+//		}
+		umdb.closeDB();
+		return list;
+	}
 	
 	//just for test
 	private class UserMasterDB
@@ -170,6 +195,19 @@ public class MainActivity extends Activity {
 //		         return false;
 //		    }
 //		}
+		
+		public void newOutputDB()
+		{
+			db.execSQL("DROP TABLE IF EXISTS outputmaster");
+			db.execSQL("create table outputmaster (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+					+ "Customer varchar,costCode varchar,ShiptoNumber varchar,"
+					+ "ShiptoName varchar, ShiptoAddress varchar, ShiptoCity varchar,"
+					+ "ShiptoState varchar, ShiptoZip varchar,"
+					+ "OrderTotal varchar, Warehouse varchar, WorkOrder varchar,"
+					+ "Price varchar, CustPart varchar,Item varchar,"
+					+ "Description varchar, EnterDate date,EnterTime varchar, OnOrder varchar)");
+	
+		}
 		
 		public UserMasterDB()
 		{
@@ -190,6 +228,63 @@ public class MainActivity extends Activity {
 		{
 			db= openOrCreateDatabase("EZsource.db", Context.MODE_PRIVATE, null);
 			db.execSQL("create table usermaster (_id INTEGER PRIMARY KEY AUTOINCREMENT,UserID varchar,UserName varchar,UserPin varchar,Customer varchar,CustName varchar,Returnable varchar)");
+		}
+		
+		public ArrayList<String> OutputHistory()
+		{
+			ArrayList<String> list = new ArrayList<String>();
+		//	db.qu
+			Cursor c = db.query("outputmaster", null,null, null, null, null, null);
+	//c.getCount()
+			if(!c.moveToFirst())
+				return list;
+			UserMaster um = new UserMaster();
+//			um.setCustName(c.getString(c.getColumnIndex("CustName")));
+//			um.setCustomer(c.getString(c.getColumnIndex("Customer")));
+			StringBuffer sb2 = new StringBuffer();
+			sb2.append("Customer:" + c.getString(c.getColumnIndex("Customer")) +";");
+			sb2.append("costCode:" + c.getString(c.getColumnIndex("costCode")) +";");
+			sb2.append("ShiptoNumber:" + c.getString(c.getColumnIndex("ShiptoNumber")) +";");
+			sb2.append("ShiptoAddress:" + c.getString(c.getColumnIndex("ShiptoAddress")) +";");
+			sb2.append("ShiptoCity:" + c.getString(c.getColumnIndex("ShiptoCity")) +";");
+			sb2.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
+			sb2.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
+			sb2.append("ShiptoZip:" + c.getString(c.getColumnIndex("ShiptoZip")) +";");
+			sb2.append("OrderTotal:" + c.getString(c.getColumnIndex("OrderTotal")) +";");
+			sb2.append("Warehouse:" + c.getString(c.getColumnIndex("Warehouse")) +";");
+			sb2.append("WorkOrder:" + c.getString(c.getColumnIndex("WorkOrder")) +";");
+			sb2.append("Price:" + c.getString(c.getColumnIndex("Price")) +";");
+			sb2.append("Item:" + c.getString(c.getColumnIndex("Item")) +";");
+			sb2.append("Description:" + c.getString(c.getColumnIndex("Description")) +";");
+			sb2.append("EnterDate:" + c.getString(c.getColumnIndex("EnterDate")) +";");
+			sb2.append("EnterTime:" + c.getString(c.getColumnIndex("EnterTime")) +";");
+			sb2.append("OnOrder:" + c.getString(c.getColumnIndex("OnOrder")) +";");
+
+			list.add(sb2.toString());		
+			while(c.moveToNext())
+			{
+				StringBuffer sb = new StringBuffer();
+				sb.append("Customer:" + c.getString(c.getColumnIndex("Customer")) +";");
+				sb.append("costCode:" + c.getString(c.getColumnIndex("costCode")) +";");
+				sb.append("ShiptoNumber:" + c.getString(c.getColumnIndex("ShiptoNumber")) +";");
+				sb.append("ShiptoAddress:" + c.getString(c.getColumnIndex("ShiptoAddress")) +";");
+				sb.append("ShiptoCity:" + c.getString(c.getColumnIndex("ShiptoCity")) +";");
+				sb.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
+				sb.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
+				sb.append("ShiptoZip:" + c.getString(c.getColumnIndex("ShiptoZip")) +";");
+				sb.append("OrderTotal:" + c.getString(c.getColumnIndex("OrderTotal")) +";");
+				sb.append("Warehouse:" + c.getString(c.getColumnIndex("Warehouse")) +";");
+				sb.append("WorkOrder:" + c.getString(c.getColumnIndex("WorkOrder")) +";");
+				sb.append("Price:" + c.getString(c.getColumnIndex("Price")) +";");
+				sb.append("Item:" + c.getString(c.getColumnIndex("Item")) +";");
+				sb.append("Description:" + c.getString(c.getColumnIndex("Description")) +";");
+				sb.append("EnterDate:" + c.getString(c.getColumnIndex("EnterDate")) +";");
+				sb.append("EnterTime:" + c.getString(c.getColumnIndex("EnterTime")) +";");
+				sb.append("OnOrder:" + c.getString(c.getColumnIndex("OnOrder")) +";");
+				list.add(sb.toString());		
+			}
+			return list;
+			
 		}
 		public void checktableExist()
 		{
@@ -221,15 +316,7 @@ public class MainActivity extends Activity {
 		{
 			db= openOrCreateDatabase("EZsource.db", Context.MODE_PRIVATE, null);
 			
-			db.execSQL("DROP TABLE IF EXISTS outputmaster");
-			db.execSQL("create table outputmaster (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-					+ "Customer varchar,costCode varchar,ShiptoNumber varchar,"
-					+ "ShiptoName varchar, ShiptoAddress varchar, ShiptoCity varchar,"
-					+ "ShiptoState varchar, ShiptoZip varchar,"
-					+ "OrderTotal varchar, Warehouse varchar, WorkOrder varchar,"
-					+ "Price varchar, CustPart varchar,Item varchar,"
-					+ "Description varchar, EnterDate date,EnterTime varchar, OnOrder varchar)");
-			
+		
 			db.execSQL("DROP TABLE IF EXISTS usermaster"); 
 		//	db.execSQL("drop table if exists usermaster");
 	    //    db.execSQL("CREATE TABLE person (_id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, age SMALLINT)");  
@@ -323,12 +410,12 @@ public class MainActivity extends Activity {
 			{
 				ContentValues cv = new ContentValues();
 				cv.put("Customer", output.getCustomerNumber());
-				cv.put("CostCode", output.getShiptocode());
+				cv.put("costCode", output.getShiptocode());
 				cv.put("ShiptoNumber", output.getShipToNumber());
 				cv.put("ShiptoAddress", output.getShipToAddress());
 				cv.put("ShiptoCity", output.getShipToCity());
 				cv.put("ShiptoState",output.getShipToState());
-				cv.put("ShipToZip", output.getShipToZip());
+				cv.put("ShiptoZip", output.getShipToZip());
 				cv.put("OrderTotal", output.getOrderTotal());
 				cv.put("Warehouse", output.getWarehouse());
 				cv.put("WorkOrder", output.getWorkOrder());
@@ -386,15 +473,15 @@ public class MainActivity extends Activity {
 	public void creatpath()
 	{
 		String path = Environment.getExternalStorageDirectory().getPath();//.getExternalStorageDirectory();
-		File destDir = new File(path + "/Ezsource/");
+		java.io.File destDir = new java.io.File(path + "/Ezsource/");
 		if(!destDir.exists())
 		{
 			destDir.mkdirs();
 		}
-		File fileUM = new File(path + "/Ezsource/UserMaster/");
-		File fileCM = new File(path + "/Ezsource/CustomerMaster/");
-		File fileAIT = new File(path + "/Ezsource/AphaseItemTemplate/");
-		File fileRI = new File(path + "/Ezsource/ReturnableItems/");
+		java.io.File fileUM = new java.io.File(path + "/Ezsource/UserMaster/");
+		java.io.File fileCM = new java.io.File(path + "/Ezsource/CustomerMaster/");
+		java.io.File fileAIT = new java.io.File(path + "/Ezsource/AphaseItemTemplate/");
+		java.io.File fileRI = new java.io.File(path + "/Ezsource/ReturnableItems/");
 		if(!fileUM.exists())
 		{
 			fileUM.isDirectory();
@@ -414,7 +501,99 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	private void download()
+	{
+		 Thread t = new Thread(new Runnable() {
+
+		@Override
+		public void run() {
+			try {
+				List<File> files= retrieveAllFiles(AccountActivity.service);
+				Log.e("ysy", files.size() + " ");
+				for(int i=0;i<files.size();i++)
+				{
+					Log.e("ysy", files.get(i).getId());
+					Log.e("ysy", files.get(i).getTitle());
+					Log.e("ysy", files.get(i).getDownloadUrl());
+				}
+			
+				
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		 });
+		 t.start();
+	}
+	  void updatedb()
+	  {
+			Log.e("ysy", "add new db");
+			newDb.openDB();
+			newDb.buildDB();
+			 XlsToString xts = new XlsToString();
+			 try {
+				umlist =  xts.catchUsermaster();
+				cmlist = xts.catchCustomermaster();
+				aitlist = xts.catchAphaseItemTemplate();
+				rilist = xts.catchReturnableItem();
+			} catch (Exception ea) {
+				// TODO: handle exception
+			}
+			int umlistsie = umlist.size();
+			int cmlistsize = cmlist.size();
+			int aitlistsize = aitlist.size();
+			int rilistsize = rilist.size();
+			for(int i = 0; i < umlistsie; i++)
+			{
+				newDb.insertUserMasterDB(umlist.get(i));
+			}
+			for(int i = 0;i <  cmlistsize;i++)
+			{
+				newDb.insertCustomerMasterDB(cmlist.get(i));
+			}
+			for(int i=0; i < aitlistsize ; i++)
+			{
+				newDb.insertItemDB(aitlist.get(i));
+			}
+			for(int i = 0; i < rilistsize && i < 300; i++)
+			{
+				newDb.insertReturnableItemDB(rilist.get(i));
+			}
+			newDb.closeDB();
+	  }
 	
+	
+	  private static List<File> retrieveAllFiles(Drive service) throws IOException {
+		    List<File> result = new ArrayList<File>();
+		    
+		//    Thread t = new Thread(new Runnable() {
+		    
+		    Files.List request = service.files().list();
+		//    request.setQ("trashed=false");
+		 //   request.s
+	//	    request.
+		    do {
+		      try {
+		        FileList files = request.execute();
+		    //    result.addAll(files);
+		        for(int i=0;i<files.size();i++)
+		        {
+		        	result.add(files.getItems().get(i));
+		        }
+		        result.addAll(files.getItems());
+		        request.setPageToken(files.getNextPageToken());
+		      } catch (IOException e) {
+		        System.out.println("An error occurred: " + e);
+		        request.setPageToken(null);
+		      }
+		    } while (request.getPageToken() != null &&
+		             request.getPageToken().length() > 0);
+
+		    return result;
+		  }
+
 	
 	
 }

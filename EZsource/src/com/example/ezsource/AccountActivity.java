@@ -51,20 +51,20 @@ public class AccountActivity extends Activity {
         if (accountName != null) {
           credential.setSelectedAccountName(accountName);
           service = getDriveService(credential);
-          startCameraIntent();
+    //      startCameraIntent();
         }
       }
       break;
     case REQUEST_AUTHORIZATION:
       if (resultCode == Activity.RESULT_OK) {
-        saveFileToDrive();
+    //    saveFileToDrive();
       } else {
         startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
       }
       break;
     case CAPTURE_IMAGE:
       if (resultCode == Activity.RESULT_OK) {
-        saveFileToDrive();
+   //     saveFileToDrive();
       }
     }
   }
@@ -76,9 +76,9 @@ public class AccountActivity extends Activity {
     fileUri = Uri.fromFile(new java.io.File(mediaStorageDir + java.io.File.separator + "IMG_"
         + timeStamp + ".jpg"));
 
-    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-    startActivityForResult(cameraIntent, CAPTURE_IMAGE);
+ //   Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+  //  cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+  //  startActivityForResult(cameraIntent, CAPTURE_IMAGE);
   }
 
   private void saveFileToDrive() {
@@ -122,7 +122,7 @@ public class AccountActivity extends Activity {
         } catch (UserRecoverableAuthIOException e) {
         	Log.e("ysy", "UserRecoverableAuthIOException");
         	e.printStackTrace();
-          startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
+   //       startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
         } catch (IOException e) {
           e.printStackTrace();
         }

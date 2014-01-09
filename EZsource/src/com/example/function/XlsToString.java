@@ -1,10 +1,7 @@
 package com.example.function;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +10,8 @@ import com.example.source.CustomerMasterfile;
 import com.example.source.ReturnableItem;
 import com.example.source.UserMaster;
 
-import jxl.Cell;
-import jxl.Sheet;
-import jxl.Workbook;
+import jxl.*;
+
 import jxl.read.biff.BiffException;
 import android.os.Environment;
 import android.util.Log;
@@ -32,12 +28,12 @@ public class XlsToString {
 	//	  file = new File(filename);
 		  file = new File("/mnt/sdcard/Ezsource/UserMaster/UserMaster.xls");
 	//	  filename = path + "/Ezsource/UserMaster/" + "UserMaster.xls";
-
+	//	  Workbook.getWorkbook(file);
 	//	  InputStream is = new FileInputStream(filename);
-		  Workbook rwb;
 		  List<UserMaster> list = new ArrayList<UserMaster>();
+		
 		  try{
-			  rwb = Workbook.getWorkbook(file);
+			  Workbook rwb  = Workbook.getWorkbook(file);
 			  Sheet rs = rwb.getSheet(0);
 	//		  Cell c00 = rs.getCell(0, 0);
 			  int columnsnum = rs.getColumns();
@@ -58,6 +54,7 @@ public class XlsToString {
 		  }
 		  catch(Exception e)
 		  {
+			  e.printStackTrace();
 				Log.e("ysy ", e.toString());		  
 		  }
 		  return list;
@@ -75,10 +72,10 @@ public class XlsToString {
 	//	  filename = path + "/Ezsource/UserMaster/" + "UserMaster.xls";
 
 	//	  InputStream is = new FileInputStream(filename);
-		  Workbook rwb;
+	//	  Workbook rwb;
 		  List<CustomerMasterfile> list = new ArrayList<CustomerMasterfile>();
 		  try{
-			  rwb = Workbook.getWorkbook(file);
+			  Workbook  rwb = Workbook.getWorkbook(file);
 			  Sheet rs = rwb.getSheet(0);
 	//		  Cell c00 = rs.getCell(0, 0);
 			  int columnsnum = rs.getColumns();
@@ -122,10 +119,10 @@ public class XlsToString {
 		File file = new File(path + "/Ezsource/AphaseItemTemplate");
 		String filename = file.listFiles()[0].getPath();
 		file = new File(path + "/Ezsource/AphaseItemTemplate/AphaseItemTemplate.xls");
-		Workbook rwb;
+		
 		List<AphaseItemTemplate> list = new ArrayList<AphaseItemTemplate>();
 		try {
-			rwb = Workbook.getWorkbook(file);
+			Workbook rwb = Workbook.getWorkbook(file);
 			Sheet rs = rwb.getSheet(0);
 			int rowsnum = rs.getRows();
 			Log.e("ysy", "itemrow " + rowsnum);

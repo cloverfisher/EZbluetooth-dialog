@@ -49,6 +49,7 @@ import com.example.source.Output;
 import com.example.source.UserMaster;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.http.FileContent;
+import com.google.api.client.util.Sleeper;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
@@ -56,7 +57,7 @@ public class TransactionActivity extends Activity {
 	BluetoothAdapter mBluetoothAdapter;
 	UUID uuid;
 	String tempstring ;
-	int state =0;//automata
+	public static int state =0;//automata
 	final int STATE = 8908;
 	final int ENTERUSERID = 1;
 	final int ENTERPIN = 2;
@@ -78,6 +79,8 @@ public class TransactionActivity extends Activity {
 	String stateshiptocity = null;
 	String stateshiptozip = null;
 //	String statetime = null;
+	
+	int bluetoothdevice;
 
 	  static final int REQUEST_ACCOUNT_PICKER = 1;
 	  static final int REQUEST_AUTHORIZATION = 2;
@@ -98,15 +101,15 @@ public class TransactionActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_transaction);
 	//	state = 1;
-		
-		saveFileToDrive();
-		
-	//	bluetooth();
+		Toast.makeText(this, "Some message!", Toast.LENGTH_LONG).show();
+	//	saveFileToDrive();
+	//	OutputHistoryPlus();
+		bluetooth();
 
 		ad =new AlertDialog.Builder(this);
-	//	showTimeDialog();
-	//	enteruserid();
-	//	showdialog(state);
+
+		enteruserid();
+	
 		
 		ListView list =  (ListView)findViewById(R.id.mylistview);
 		HashMap<String, String> map = new HashMap<String ,String>();
@@ -132,14 +135,14 @@ public class TransactionActivity extends Activity {
 		        	Drive service =AccountActivity.service;
 		          
 		          File body = new File();
-		          body.setTitle("lalala");
+		          body.setTitle("um");
 		          body.setDescription("A test document");
-		          body.setMimeType("text/plain");
+		          body.setMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		          
 		          String path = Environment.getExternalStorageDirectory().getPath();
 			//	  File file = new File(path + "/Ezsource/UserMaster");
-		          java.io.File fileContent1 = new java.io.File(path + "/b.txt");
-		          FileContent mediaContent = new FileContent("text/plain", fileContent1);
+		          java.io.File fileContent1 = new java.io.File(path + "/Ezsource/UserMaster/UserMaster.xls");
+		          FileContent mediaContent = new FileContent("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileContent1);
 
 		          File file = service.files().insert(body, mediaContent).execute();
 		          if (file != null) {
@@ -232,10 +235,19 @@ public class TransactionActivity extends Activity {
 	            semp.release();
 	        } catch (IOException connectException) {
 	            // Unable to connect; close the socket and get out
-	            try {
-	                mmSocket.close();
-	            } catch (IOException closeException) { }
-	            return;
+
+	        	System.exit(0);
+//	            try {
+//	                mmSocket.close();
+//	                return;
+//	            } 
+//	            catch (IOException closeException) { 
+//	            	closeException.printStackTrace();
+//	            }
+//	        
+//		            return;          	
+	            
+
 	        }
 
 	        // Do work to manage the connection (in a separate thread)
@@ -327,12 +339,12 @@ public class TransactionActivity extends Activity {
 			{
 				ContentValues cv = new ContentValues();
 				cv.put("Customer", output.getCustomerNumber());
-				cv.put("CostCode", output.getShiptocode());
+				cv.put("costCode", output.getShiptocode());
 				cv.put("ShiptoNumber", output.getShipToNumber());
 				cv.put("ShiptoAddress", output.getShipToAddress());
 				cv.put("ShiptoCity", output.getShipToCity());
 				cv.put("ShiptoState",output.getShipToState());
-				cv.put("ShipToZip", output.getShipToZip());
+				cv.put("ShiptoZip", output.getShipToZip());
 				cv.put("OrderTotal", output.getOrderTotal());
 				cv.put("Warehouse", output.getWarehouse());
 				cv.put("WorkOrder", output.getWorkOrder());
@@ -347,6 +359,48 @@ public class TransactionActivity extends Activity {
 				db.insert("outputmaster", null, cv);
 			}
 					
+		}
+		
+		public ArrayList<String> OutputHistory()
+		{
+			ArrayList<String> list = new ArrayList<String>();
+		//	db.qu
+			Cursor c = db.query("outputmaster", null,null, null, null, null, null);
+	//c.getCount()
+			if(!c.moveToFirst())
+				return list;
+			UserMaster um = new UserMaster();
+//			um.setCustName(c.getString(c.getColumnIndex("CustName")));
+//			um.setCustomer(c.getString(c.getColumnIndex("Customer")));
+			StringBuffer sb = new StringBuffer();
+			sb.append("Customer:" + c.getString(c.getColumnIndex("Customer")) +";");
+			sb.append("costCode:" + c.getString(c.getColumnIndex("costCode")) +";");
+			sb.append("ShiptoNumber:" + c.getString(c.getColumnIndex("ShiptoNumber")) +";");
+			sb.append("ShiptoAddress:" + c.getString(c.getColumnIndex("ShiptoAddress")) +";");
+			sb.append("ShiptoCity:" + c.getString(c.getColumnIndex("ShiptoCity")) +";");
+			sb.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
+			sb.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
+			sb.append("ShiptoZip:" + c.getString(c.getColumnIndex("ShiptoZip")) +";");
+			sb.append("OrderTotal:" + c.getString(c.getColumnIndex("OrderTotal")) +";");
+			sb.append("Warehouse:" + c.getString(c.getColumnIndex("Warehouse")) +";");
+			sb.append("WorkOrder:" + c.getString(c.getColumnIndex("WorkOrder")) +";");
+			sb.append("Price:" + c.getString(c.getColumnIndex("Price")) +";");
+			sb.append("Item:" + c.getString(c.getColumnIndex("Item")) +";");
+			sb.append("Description:" + c.getString(c.getColumnIndex("Description")) +";");
+			sb.append("EnterDate:" + c.getString(c.getColumnIndex("EnterDate")) +";");
+			sb.append("EnterTime:" + c.getString(c.getColumnIndex("EnterTime")) +";");
+			sb.append("OnOrder:" + c.getString(c.getColumnIndex("OnOrder")) +";");
+
+			list.add(sb.toString());		
+//			while(c.moveToNext())
+//			{
+//				um = new UserMaster();
+//				um.setCustName(c.getString(c.getColumnIndex("CustName")));
+//				um.setCustomer(c.getString(c.getColumnIndex("Customer")));
+//				list.add(um);		
+//			}
+			return list;
+			
 		}
 		
 		
@@ -668,6 +722,7 @@ public class TransactionActivity extends Activity {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
 				String tempString = et.getText().toString();
 				Log.e("ysy","shiptonum" + tempString);
      		   dialog.dismiss();
@@ -780,6 +835,7 @@ public class TransactionActivity extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO add scanitem function get the string to somewhere
+				dialog.dismiss();
 				String tempString = et.getText().toString();
 				workordernumberplus(tempString);
 //				Log.e("ysy", "work order" + et.getText().toString());
@@ -810,6 +866,7 @@ public class TransactionActivity extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
+				dialog.dismiss();
 				stateitemid = et.getText().toString();
 				Log.e("ysy", "itemid "+ stateitemid);
 				if(checkItemId(stateitemid))
@@ -833,9 +890,10 @@ public class TransactionActivity extends Activity {
 					output.setCargoList(cargolist);
 					output.setOrderTotal(cargolist.size());
 					output.setShipdate(stateshipdate);
-					
+					//Log.e("ysy", "insert item into sql");
+					showToast("insert item into sql");
 					insertOutputDBPlus(output);
-					
+					dialog.dismiss();
 				}
 				else {
 					//TODO please input the at least one item ;
@@ -1184,6 +1242,17 @@ public class TransactionActivity extends Activity {
 		umdb.closeDB();
 	}
 	
+	void OutputHistoryPlus()
+	{
+		UserMasterDB umdb = new UserMasterDB();
+		umdb.openDB();
+		List<String> list = umdb.OutputHistory();
+		for(int i=0;i<list.size();i++)
+		{
+			Log.e("ysy", list.get(i));
+		}
+		umdb.closeDB();
+	}
 
 	boolean checkUserID(String id)
 	{
@@ -1263,13 +1332,37 @@ public class TransactionActivity extends Activity {
 		}
 		
 		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+		if(pairedDevices.size()<=0)
+		{
+			showToast("can not find bluetooth device,please open the bluetooth");
+			return;
+		}
+		final String[] st = new String[pairedDevices.size()];
 		if(pairedDevices.size() > 0)
 		{
+			
+			
+			
+			int i=0;
 			for(BluetoothDevice device : pairedDevices)
 			{
-				
+				st[i] = device.getName();
 			}
 		}
+/*			new AlertDialog.Builder(this).setTitle("Choose customerName").setItems(st,
+					new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// 
+							Log.e("ysy",st[which]);
+							bluetoothdevice = which;
+							
+							
+						}
+					}
+					).show();		*/
+
 		   // Create a BroadcastReceiver for ACTION_FOUND
 		final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		    public void onReceive(Context context, Intent intent) {
@@ -1297,10 +1390,15 @@ public class TransactionActivity extends Activity {
 		ConnectThread clientThread = null;
 		if(pairedDevices.size() > 0)
 		{
+			int i=0;
 			for(BluetoothDevice device : pairedDevices)
 			{
 				Log.e("ysy", "for loop");
-				clientThread = new ConnectThread(device);
+				if(i==bluetoothdevice)
+				{
+					clientThread = new ConnectThread(device);
+					break;
+				}
 			}
 //			for(int i = 0; i< pairedDevices.size();i++)
 //			{
@@ -1308,13 +1406,21 @@ public class TransactionActivity extends Activity {
 //			}
 		}
 		clientThread.start();
-
 		try {
-			semp.acquire();
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+//		try {
+//			//semp.acquire();
+//			
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		
 		/*
 		 * Handler
 		 * */
