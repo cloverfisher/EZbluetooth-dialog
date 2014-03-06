@@ -36,20 +36,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.source.AphaseItemTemplate;
 import com.example.source.Cargo;
-import com.example.source.CustomerMasterfile;
+import com.example.source.NumberDialog;
 import com.example.source.Output;
 import com.example.source.UserMaster;
+import com.google.android.gms.internal.i;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.http.FileContent;
-import com.google.api.client.util.Sleeper;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
@@ -57,6 +59,7 @@ public class TransactionActivity extends Activity {
 	BluetoothAdapter mBluetoothAdapter;
 	UUID uuid;
 	String tempstring ;
+int qtn = 0;
 	public static int state =0;//automata
 	final int STATE = 8908;
 	final int ENTERUSERID = 1;
@@ -107,9 +110,14 @@ public class TransactionActivity extends Activity {
 		bluetooth();
 
 		ad =new AlertDialog.Builder(this);
+	//	AlertDialog.Builder
+	//	NumberDialog.b
+		
+	//	enterQuantity(null);
+	                                                     	enteruserid();
+	//	NumberDialog dialog = new NumberDialog(TransactionActivity.this);
+	//	dialog.show();
 
-		enteruserid();
-	
 		
 		ListView list =  (ListView)findViewById(R.id.mylistview);
 		HashMap<String, String> map = new HashMap<String ,String>();
@@ -499,7 +507,149 @@ public class TransactionActivity extends Activity {
 			db.close();
 		}
 	}
+	
+	int testi =0;
+	int minustate = 0;
+	public void testdialog()
+	{
+		
+		
+		View view = LayoutInflater.from(this).inflate(R.layout.numdialoglayout, null);
+		ad.setView(view);
+		
+		final TextView tv = (TextView)view.findViewById(R.id.textView1);
+		final TextView tvminus = (TextView)view.findViewById(R.id.textView0);
+		 testi =0;
+				 minustate = 0;
+	//	Button button1 = (Button)view.findViewById(R.id.button1);
+ 	  	 Button btn1 = (Button)view.findViewById(R.id.button1); 
+ 	  	 Button btn0 = (Button)view.findViewById(R.id.button0); 
+ 	  	 Button btn2 = (Button)view.findViewById(R.id.button2); 
+ 	  	 Button btn3 = (Button)view.findViewById(R.id.button3); 
+ 	  	 Button btn4 = (Button)view.findViewById(R.id.button4); 
+ 	  	 Button btn5 = (Button)view.findViewById(R.id.button5); 
+ 	  	 Button btn6 = (Button)view.findViewById(R.id.button6); 
+ 	  	 Button btn7 = (Button)view.findViewById(R.id.button7); 
+ 	  	 Button btn8 = (Button)view.findViewById(R.id.button8); 
+ 	  	 Button btn9 = (Button)view.findViewById(R.id.button9);
+ 	  	 Button btnminus = (Button)view.findViewById(R.id.buttonminus); 
+ 	  	 Button btndelete = (Button)view.findViewById(R.id.buttondelete); 
+ 	  	 
+ 	  	 
+   	  	btn1.setOnClickListener(new View.OnClickListener() {
+			
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 1;
+ 					Log.e("ysy", "testi " +testi);
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btn2.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 2;
+ 					tv.setText(""+testi);
 
+ 				}
+ 			});
+ 	  	  	btn3.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 3;
+ 					tv.setText(""+testi);
+
+ 				}
+ 			});
+ 	  	  	btn4.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 4;
+ 					tv.setText(""+testi);
+
+ 				}
+ 			});
+ 	  	  	btn5.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 5;
+ 					tv.setText(""+testi);
+
+ 				}
+ 			});
+ 	  	  	btn6.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 6;
+ 					tv.setText(""+testi);
+
+ 				}
+ 			});
+ 	  	  	btn7.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 7;
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btn8.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 8;
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btn9.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 9;
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btn0.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 0;
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btndelete.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi/10 ;
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btnminus.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					if(minustate == 0)
+ 					{
+ 						tvminus.setText("-");
+ 						minustate =1;
+ 					}
+ 					else
+ 					{
+ 						tvminus.setText("");
+ 						minustate = 0;
+ 					}
+
+ 				}
+ 			});
+		ad.show();
+	}
+	
 	//state = 1
 	public void enteruserid()
 	{
@@ -508,7 +658,8 @@ public class TransactionActivity extends Activity {
 		View promptsView = li.inflate(R.layout.simpledialoglayout, null);
   	  	final EditText et   = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);
 			ad.setTitle("enter UserID").setView(promptsView);
-			ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+		
+			AlertDialog aadialog = 	ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		               // User clicked OK button
 		        	   tempstring = et.getText().toString();
@@ -520,7 +671,8 @@ public class TransactionActivity extends Activity {
 		        		   state = ENTERPIN;
 		        		   stateuserid = tempstring;
 		        		   output.setUser(tempstring);
-		        		   enteruserpin();
+		        		   testdialog();
+		       // 		   enteruserpin();
 		        		   //  state = ENTERPIN;
 		        	   }
 		        	   else {
@@ -894,6 +1046,7 @@ public class TransactionActivity extends Activity {
 					showToast("insert item into sql");
 					insertOutputDBPlus(output);
 					dialog.dismiss();
+					dialog.cancel();
 				}
 				else {
 					//TODO please input the at least one item ;
@@ -929,51 +1082,175 @@ public class TransactionActivity extends Activity {
 
 	public void enterQuantity(AphaseItemTemplate newAphaseItemTemplate)
 	{
-		LayoutInflater li = LayoutInflater.from(this);
-		View promptsView = li.inflate(R.layout.simpledialoglayout, null);
-	//	(TextView)promptsView.findViewById(R.id.dialogtitle);
 		
-  	  	final EditText et   = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);
-  	  	et.setKeyListener(new DigitsKeyListener(false,true));
-  	  	final String title = newAphaseItemTemplate.getDescription();
-  	  	Log.e("ysy","enterQuantity");
-  	  	Log.e("ysy","title :" + title );
-  	  	ad.setTitle("Quantity:\n" + title).setView(promptsView).setPositiveButton("OK",new DialogInterface.OnClickListener(){
+		
+		View view = LayoutInflater.from(this).inflate(R.layout.numdialoglayout, null);
+		ad.setView(view);
+		
+		final TextView tv = (TextView)view.findViewById(R.id.textView1);
+		final TextView tvminus = (TextView)view.findViewById(R.id.textView0);
+		final String title = newAphaseItemTemplate.getDescription();
+		 testi =0;
+				 minustate = 0;
+	//	Button button1 = (Button)view.findViewById(R.id.button1);
+ 	  	 Button btn1 = (Button)view.findViewById(R.id.button1); 
+ 	  	 Button btn0 = (Button)view.findViewById(R.id.button0); 
+ 	  	 Button btn2 = (Button)view.findViewById(R.id.button2); 
+ 	  	 Button btn3 = (Button)view.findViewById(R.id.button3); 
+ 	  	 Button btn4 = (Button)view.findViewById(R.id.button4); 
+ 	  	 Button btn5 = (Button)view.findViewById(R.id.button5); 
+ 	  	 Button btn6 = (Button)view.findViewById(R.id.button6); 
+ 	  	 Button btn7 = (Button)view.findViewById(R.id.button7); 
+ 	  	 Button btn8 = (Button)view.findViewById(R.id.button8); 
+ 	  	 Button btn9 = (Button)view.findViewById(R.id.button9);
+ 	  	 Button btnminus = (Button)view.findViewById(R.id.buttonminus); 
+ 	  	 Button btndelete = (Button)view.findViewById(R.id.buttondelete); 
+ 	  	 
+ 	  	 
+   	  	btn1.setOnClickListener(new View.OnClickListener() {
+			
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 1;
+ 					Log.e("ysy", "testi " +testi);
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btn2.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 2;
+ 					tv.setText(""+testi);
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				dialog.dismiss();
+ 				}
+ 			});
+ 	  	  	btn3.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 3;
+ 					tv.setText(""+testi);
+
+ 				}
+ 			});
+ 	  	  	btn4.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 4;
+ 					tv.setText(""+testi);
+
+ 				}
+ 			});
+ 	  	  	btn5.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 5;
+ 					tv.setText(""+testi);
+
+ 				}
+ 			});
+ 	  	  	btn6.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 6;
+ 					tv.setText(""+testi);
+
+ 				}
+ 			});
+ 	  	  	btn7.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 7;
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btn8.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 8;
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btn9.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 9;
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btn0.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi*10 + 0;
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btndelete.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					testi = testi/10 ;
+ 					tv.setText(""+testi);
+ 				}
+ 			});
+ 	  	  	btnminus.setOnClickListener(new View.OnClickListener() {
+ 				
+ 				@Override
+ 				public void onClick(View v) {
+ 					if(minustate == 0)
+ 					{
+ 						tvminus.setText("-");
+ 						minustate =1;
+ 					}
+ 					else
+ 					{
+ 						tvminus.setText("");
+ 						minustate = 0;
+ 					}
+
+ 				}
+ 			});
+ 	  	  	ad.setTitle("QTY").setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				
-				HashMap<String, String> map = new HashMap<String ,String>();
-				map.put("date", stateshipdate);
-				map.put("qty", et.getText().toString());
-				map.put("description", title);
-				mylist.add(map);
-				Cargo cargo = new Cargo();
-				cargo.setQty(et.getText().toString());
-				cargo.setItem(stateitemid);
-				cargo.setDescription(title);
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-				cargo.setEnterdate(sdf.format(new java.util.Date()));
-				SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
-				cargo.setEntertime(sdf2.format(new java.util.Date()));
-				cargo.setUOM( "EA");
-				cargo.setPrice("1");
-				cargo.setCustPart("NULL");
-				cargo.setOnOrder("N");
-				cargolist.add(cargo);
-//				
-//				SimpleAdapter mSchedule = new SimpleAdapter(this, mylist,
-//						R.layout.mylistview,
-//						new String[]{"date","qty","description"},
-//						new int[]{R.id.listdate,R.id.listqty,R.id.listdescroption});
-//				list.setAdapter(mSchedule);
-				scanitem();
-			}
-  	  		
-  	  	}
-  	  	)
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					HashMap<String, String> map = new HashMap<String ,String>();
+					map.put("date", stateshipdate);
+					map.put("qty", tv.getText().toString());
+					map.put("description", title);
+					mylist.add(map);
+					Cargo cargo = new Cargo();
+					cargo.setQty(tv.getText().toString());
+					cargo.setItem(stateitemid);
+					cargo.setDescription(title);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+					cargo.setEnterdate(sdf.format(new java.util.Date()));
+					SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
+					cargo.setEntertime(sdf2.format(new java.util.Date()));
+					cargo.setUOM( "EA");
+					cargo.setPrice("1");
+					cargo.setCustPart("NULL");
+					cargo.setOnOrder("N");
+					cargolist.add(cargo);
+//					
+//					SimpleAdapter mSchedule = new SimpleAdapter(this, mylist,
+//							R.layout.mylistview,
+//							new String[]{"date","qty","description"},
+//							new int[]{R.id.listdate,R.id.listqty,R.id.listdescroption});
+//					list.setAdapter(mSchedule);
+					scanitem();					
+				}
+			});
+		ad.show();
+
   	  	;//.setTitle("quantity");
   	  	ad.show();
 	}

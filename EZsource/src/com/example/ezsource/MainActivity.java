@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.example.function.XlsToString;
 import com.example.source.AphaseItemTemplate;
 import com.example.source.CustomerMasterfile;
+import com.example.source.NumberDialog;
 import com.example.source.Output;
 import com.example.source.ReturnableItem;
 import com.example.source.UserMaster;
@@ -75,22 +76,6 @@ public class MainActivity extends Activity {
 
 		newDb.closeDB();
 		
-		
-		
-//		UserMaster um = new UserMaster("LOU","Lou","Ray","0201010","CANADIAN NATIONAL","Y");
-//		newDb.insertUserMasterDB(um);
-//		
-//		um = new UserMaster("LOU", "Lou", "Ray", "C201012", "CN VOUCHER-TOM DEERING", "N");	
-//		newDb.insertUserMasterDB(um);
-//		
-//		CustomerMasterfile cm = new CustomerMasterfile("0201010", "CANADIAN NATIONAL", "01", "01", 
-//				"23644200", "CN-BRIDGE & BUILDING 3010245A","Y", "N", "N", "Y", "24002 VREELAND ROAD",
-//				"FLAT ROCK", "MI", "48134", "SPECIALTIES BUYER", "");
-//		newDb.insertCustomerMasterDB(cm);
-//		cm = new CustomerMasterfile("0201010", "CANADIAN NATIONAL", "01", "01", "26950000", 
-//				"CN-SUPERVISOR MECHANICAL", "Y", "N", "N", "Y", "24002 VREELAND ROAD", 
-//				"FLAT ROCK", "MI", "48134", "CHARLES KUSE", "CHARLES.KRUSE@CN.CA");
-//		newDb.insertCustomerMasterDB(cm);
 		Button button;
 		button = (Button)findViewById(R.id.btnstartnewtran);
 		button.setOnClickListener(
@@ -101,6 +86,9 @@ public class MainActivity extends Activity {
 					Intent intent = new Intent();
 					intent.setClass(MainActivity.this, TransactionActivity.class);
 					startActivity(intent);
+					
+//					NumberDialog dialog = new NumberDialog(MainActivity.this);
+//					dialog.show();
 				}
 			}
 		);
@@ -160,6 +148,7 @@ public class MainActivity extends Activity {
 				updatedb();
 			}
 		});
+		
 	}
 	
 	public class Person
