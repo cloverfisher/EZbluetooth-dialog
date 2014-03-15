@@ -33,7 +33,12 @@
         <activity
             android:name="com.example.ezsource.HistoryActivity">
             </activity>
-            
+        <activity
+            android:name="com.example.ezsource.BluetoothActivity">
+        </activity>
+           <activity
+            android:name="com.example.ezsource.TestActivity">
+        </activity>         
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     </application>
   	<uses-permission android:name="android.permission.BLUETOOTH" />

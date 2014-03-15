@@ -7,5 +7,8 @@
 	<classpathentry kind="con" path="com.google.gdt.eclipse.managedapis.MANAGED_API_CONTAINER/drive-v2r110lv1.16.0-rc"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="/Users/shiyaoyu/developer/jar/activation.jar"/>
+	<classpathentry kind="lib" path="/Users/shiyaoyu/developer/jar/mail.jar"/>
+	<classpathentry kind="lib" path="/Users/shiyaoyu/developer/jar/additionnal.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

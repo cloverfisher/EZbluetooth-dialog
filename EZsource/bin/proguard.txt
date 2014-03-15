@@ -1,11 +1,17 @@
 # view AndroidManifest.xml #generated:30
 -keep class com.example.ezsource.AccountActivity { <init>(...); }
 
+# view AndroidManifest.xml #generated:36
+-keep class com.example.ezsource.BluetoothActivity { <init>(...); }
+
 # view AndroidManifest.xml #generated:33
 -keep class com.example.ezsource.HistoryActivity { <init>(...); }
 
 # view AndroidManifest.xml #generated:15
 -keep class com.example.ezsource.MainActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:39
+-keep class com.example.ezsource.TestActivity { <init>(...); }
 
 # view AndroidManifest.xml #generated:24
 -keep class com.example.ezsource.TransactionActivity { <init>(...); }

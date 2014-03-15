@@ -83,6 +83,9 @@ int qtn = 0;
 	String stateshiptozip = null;
 //	String statetime = null;
 	
+//	static Handler ahandler;
+	
+	
 	int bluetoothdevice;
 
 	  static final int REQUEST_ACCOUNT_PICKER = 1;
@@ -99,6 +102,58 @@ int qtn = 0;
 	
 	ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
 	
+	
+	/*
+	 * Handler
+	 * */
+	static Handler ahandler = new Handler()
+	{
+		
+		String atempstring;
+		
+	    public void handleMessage(Message msg) {
+	    	Log.e("ysy", "msg"+ msg.what);
+        	atempstring = msg.obj.toString();
+        	atempstring = atempstring.trim();
+	        switch (msg.what) {
+	        case 1: //state 1
+	        {
+	     //   	tempstring = msg.obj.toString();
+	        //	enteruseridplus(tempstring);
+	        	Log.e("ysy","lalalala" + atempstring);
+	        	break;
+	        }
+//	        case 2:
+//	        {
+//	        	Log.e("ysy", "enterpin");
+//	        //	tempstring = msg.obj.toString();
+//	        	enteruserpinplus(tempstring);
+//
+//	        	break;
+//	        }
+//	        case 4:
+//	        {
+//	       // 	tempstring = msg.obj.toString();
+//	        	entershiptoplus(tempstring);
+//	        	break;
+//	        }
+//	        case 5:
+//	        {
+//	         //	tempstring = msg.obj.toString();
+//	        	workordernumberplus(tempstring);
+//	        	break;
+//	        }
+//	        case 6:
+//	        {
+//	     //   	tempstring = msg.obj.toString();
+//	        	scanitemplus(tempstring);
+//	        	break;
+//	        }
+	      }
+		    super.handleMessage(msg); 
+	    }
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -107,7 +162,7 @@ int qtn = 0;
 		Toast.makeText(this, "Some message!", Toast.LENGTH_LONG).show();
 	//	saveFileToDrive();
 	//	OutputHistoryPlus();
-		bluetooth();
+	//	bluetooth();
 
 		ad =new AlertDialog.Builder(this);
 	//	AlertDialog.Builder
@@ -199,10 +254,6 @@ int qtn = 0;
 			new AlertDialog.Builder(TransactionActivity.this).setTitle("Alert")
 			.setMessage("no bluetooth").show();
 		}
-/*		if(!mBluetoothAdapter.isEnabled()){
-			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-		}*/
 		return tempStr;
 	}
 	/*

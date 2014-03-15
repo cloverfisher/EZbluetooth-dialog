@@ -120,8 +120,9 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-	//			download();
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, TestActivity.class);
+				startActivity(intent);
 			}
 		});
 		
