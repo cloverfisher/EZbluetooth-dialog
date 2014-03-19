@@ -57,25 +57,25 @@ public class MainActivity extends Activity {
 
 		setContentView(R.layout.mainactivity);
 
-		try {
-			newDb.openDB();
-		//	newDb.buildDB();
-		//	newDb.bla();
-			//newDb.checktableExist();
-			newDb.closeDB();
-			//newDb.
-		} catch (Exception e) {
-			// TODO: handle exception
-			updatedb();
-			newDb.openDB();
-			newDb.newOutputDB();
-			newDb.closeDB();
-	
-		}
-
-
-		newDb.closeDB();
-		
+//		try {
+//			newDb.openDB();
+//		//	newDb.buildDB();
+//		//	newDb.bla();
+//			//newDb.checktableExist();
+//			newDb.closeDB();
+//			//newDb.
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//			updatedb();
+//			newDb.openDB();
+//			newDb.newOutputDB();
+//			newDb.closeDB();
+//	
+//		}
+//
+//
+//		newDb.closeDB();
+	// Transaction button	
 		Button button;
 		button = (Button)findViewById(R.id.btnstartnewtran);
 		button.setOnClickListener(
@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
 				}
 			}
 		);
-		
+		// View Transaction history
 		Button btnViewHistory;
 		
 		btnViewHistory = (Button)findViewById(R.id.btnhistory);
@@ -104,16 +104,15 @@ public class MainActivity extends Activity {
 				ArrayList<String> list =  OutputHistoryPlus();
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, HistoryActivity.class);
-				Bundle bundle = new Bundle();
-				bundle.putStringArrayList("alist", list);
-			//	intent.putExtra("alist", list);
-				intent.putExtras(bundle);
+//				Bundle bundle = new Bundle();
+//				bundle.putStringArrayList("alist", list);
+//			//	intent.putExtra("alist", list);
+//				intent.putExtras(bundle);
 				startActivity(intent);
 			}
 		});
 		
-	//	btnViewHistroy = (Button)findViewById(R.id.)
-		
+	// BlueToothSetting	
 		Button btnBlueTooth;
 		btnBlueTooth = (Button)findViewById(R.id.btnbluetooth);
 		btnBlueTooth.setOnClickListener(new View.OnClickListener() {
@@ -125,7 +124,7 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-		
+	//no use now	
 		Button btnSettingButton;
 		btnSettingButton = (Button)findViewById(R.id.btnsetting);
 		btnSettingButton.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +137,7 @@ public class MainActivity extends Activity {
 				
 			}
 		});
-		
+	//update the database by the inputfile
 		Button btnDBUpdate;
 		btnDBUpdate = (Button)findViewById(R.id.btndbupdate);
 		btnDBUpdate.setOnClickListener(new View.OnClickListener() {
@@ -147,6 +146,17 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				updatedb();
+			}
+		});
+		
+		Button btnDBsearchButton;
+		btnDBsearchButton = (Button)findViewById(R.id.btndbsearch);
+		btnDBsearchButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		
@@ -232,23 +242,23 @@ public class MainActivity extends Activity {
 //			um.setCustName(c.getString(c.getColumnIndex("CustName")));
 //			um.setCustomer(c.getString(c.getColumnIndex("Customer")));
 			StringBuffer sb2 = new StringBuffer();
-			sb2.append("Customer:" + c.getString(c.getColumnIndex("Customer")) +";");
-			sb2.append("costCode:" + c.getString(c.getColumnIndex("costCode")) +";");
-			sb2.append("ShiptoNumber:" + c.getString(c.getColumnIndex("ShiptoNumber")) +";");
-			sb2.append("ShiptoAddress:" + c.getString(c.getColumnIndex("ShiptoAddress")) +";");
-			sb2.append("ShiptoCity:" + c.getString(c.getColumnIndex("ShiptoCity")) +";");
-			sb2.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
-			sb2.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
-			sb2.append("ShiptoZip:" + c.getString(c.getColumnIndex("ShiptoZip")) +";");
-			sb2.append("OrderTotal:" + c.getString(c.getColumnIndex("OrderTotal")) +";");
-			sb2.append("Warehouse:" + c.getString(c.getColumnIndex("Warehouse")) +";");
-			sb2.append("WorkOrder:" + c.getString(c.getColumnIndex("WorkOrder")) +";");
-			sb2.append("Price:" + c.getString(c.getColumnIndex("Price")) +";");
-			sb2.append("Item:" + c.getString(c.getColumnIndex("Item")) +";");
-			sb2.append("Description:" + c.getString(c.getColumnIndex("Description")) +";");
-			sb2.append("EnterDate:" + c.getString(c.getColumnIndex("EnterDate")) +";");
-			sb2.append("EnterTime:" + c.getString(c.getColumnIndex("EnterTime")) +";");
-			sb2.append("OnOrder:" + c.getString(c.getColumnIndex("OnOrder")) +";");
+			sb2.append("\tEnterDate:" + c.getString(c.getColumnIndex("EnterDate")) +"\t");
+			sb2.append("\tEnterTime:" + c.getString(c.getColumnIndex("EnterTime")) +"\n");
+			sb2.append("\tDescription:" + c.getString(c.getColumnIndex("Description")) +"\n");
+			sb2.append("\tItem:" + c.getString(c.getColumnIndex("Item")) +"\n");
+			sb2.append("\tCustomer:" + c.getString(c.getColumnIndex("Customer")) +"\t");
+			sb2.append("\tcostCode:" + c.getString(c.getColumnIndex("costCode")) +"\n");
+			sb2.append("\tShiptoNumber:" + c.getString(c.getColumnIndex("ShiptoNumber")) +"\n");
+			sb2.append("\tShiptoAddress:" + c.getString(c.getColumnIndex("ShiptoAddress")) +"\n");
+			sb2.append("\tCity:" + c.getString(c.getColumnIndex("ShiptoCity")) +"\n");
+			sb2.append("\tState:" + c.getString(c.getColumnIndex("ShiptoState")) +"\t");
+			sb2.append("\tZip:" + c.getString(c.getColumnIndex("ShiptoZip")) +"\n");
+			sb2.append("\tOrderTotal:" + c.getString(c.getColumnIndex("OrderTotal")) +"\n");
+			sb2.append("\tWarehouse:" + c.getString(c.getColumnIndex("Warehouse")) +"\n");
+			sb2.append("\tWorkOrder:" + c.getString(c.getColumnIndex("WorkOrder")) +"\n");
+			sb2.append("\tPrice:" + c.getString(c.getColumnIndex("Price")) +"\n");
+
+			sb2.append("OnOrder:" + c.getString(c.getColumnIndex("OnOrder")) +"");
 
 			list.add(sb2.toString());		
 			while(c.moveToNext())
@@ -535,6 +545,7 @@ public class MainActivity extends Activity {
 			int cmlistsize = cmlist.size();
 			int aitlistsize = aitlist.size();
 			int rilistsize = rilist.size();
+			Log.e("ysy", "item set size = "+aitlistsize);
 			for(int i = 0; i < umlistsie; i++)
 			{
 				newDb.insertUserMasterDB(umlist.get(i));
@@ -547,7 +558,7 @@ public class MainActivity extends Activity {
 			{
 				newDb.insertItemDB(aitlist.get(i));
 			}
-			for(int i = 0; i < rilistsize && i < 300; i++)
+			for(int i = 0; i < rilistsize ; i++)
 			{
 				newDb.insertReturnableItemDB(rilist.get(i));
 			}
