@@ -4,6 +4,12 @@
 # view AndroidManifest.xml #generated:36
 -keep class com.example.ezsource.BluetoothActivity { <init>(...); }
 
+# view AndroidManifest.xml #generated:42
+-keep class com.example.ezsource.CostomerCodeActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:46
+-keep class com.example.ezsource.DBqueryActivity { <init>(...); }
+
 # view AndroidManifest.xml #generated:33
 -keep class com.example.ezsource.HistoryActivity { <init>(...); }
 

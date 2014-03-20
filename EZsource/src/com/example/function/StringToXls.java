@@ -123,11 +123,11 @@ public class StringToXls {
 		  i++;
 		  addLabel(sheet, i, j, output.getBranch());
 		  i++;
-	//Disc	  addLabel(sheet, i, j, output);
+		  addLabel(sheet, i, j, "1");
 		  i++;
-	//Disc Days	  addLabel(sheet, i, j, output);
+		  addLabel(sheet, i, j, "10");
 		  i++;
-	//NetDays	  addLabel(sheet, i, j, output);
+		  addLabel(sheet, i, j, "30");
 		  i++;
 		  addLabel(sheet, i, j, output.getShipToNumber());
 		  i++;

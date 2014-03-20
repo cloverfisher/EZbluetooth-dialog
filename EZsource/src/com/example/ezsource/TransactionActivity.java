@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -99,8 +100,24 @@ int qtn = 0;
 	List<Cargo> cargolist = new ArrayList();
 	Calendar calendar = Calendar.getInstance();  
 
-	
+	SharedPreferences costomercode;
+	String costomercodeString;
 	ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+	
+	public boolean costomerCodeOn()
+	{
+		costomercode = getSharedPreferences("MyPrefsFile", 0);
+		costomercodeString = costomercode.getString("costomercode", "");
+		if(costomercodeString.equals(""))
+		{
+			Toast.makeText(this, "please input your costomer code in device", Toast.LENGTH_LONG).show();
+			return false;
+		}
+		else {
+			return true;
+		}
+		
+	}
 	
 	
 	/*
@@ -158,8 +175,12 @@ int qtn = 0;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_transaction);
+		if(!costomerCodeOn())
+		{
+			finish();
+		}
 	//	state = 1;
-		Toast.makeText(this, "Some message!", Toast.LENGTH_LONG).show();
+	//	Toast.makeText(this, "Some message!", Toast.LENGTH_LONG).show();
 	//	saveFileToDrive();
 	//	OutputHistoryPlus();
 	//	bluetooth();

@@ -12,10 +12,13 @@ import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -42,6 +45,8 @@ public class MainActivity extends Activity {
 	BluetoothAdapter mBluetoothAdapter;
 	UUID uuid;
 	Semaphore semp = new Semaphore(0);
+	
+	SharedPreferences costomercodeString;
 	List<UserMaster> umlist = null;
 	List<CustomerMasterfile> cmlist = null;
 	List<AphaseItemTemplate> aitlist = null;
@@ -54,9 +59,11 @@ public class MainActivity extends Activity {
 		Toast.makeText(this, "please hold the bluetooth device for 10 s and then make a transaction!", Toast.LENGTH_LONG).show();
 		creatpath();
 
-
+		costomercodeString = getSharedPreferences("costomercode", 0);
+		String silent = costomercodeString.getString("costomercode", "");
 		setContentView(R.layout.mainactivity);
 
+		 
 //		try {
 //			newDb.openDB();
 //		//	newDb.buildDB();
@@ -156,6 +163,45 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				
+				AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+				ad.setTitle("search item or returnable item DB").setPositiveButton("normal item", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent();
+						Bundle bundle = new Bundle();
+						bundle.putString("what", "normal");
+						intent.putExtras(bundle);
+						intent.setClass(MainActivity.this, DBqueryActivity.class);
+						startActivity(intent);
+					}
+				}).setNegativeButton("returnable item", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent();
+						Bundle bundle = new Bundle();
+						bundle.putString("what", "returnable");
+						intent.putExtras(bundle);
+						intent.setClass(MainActivity.this, DBqueryActivity.class);
+						startActivity(intent);
+						
+					}
+				}).show();
+				
+			}
+		});
+		
+		Button btnCostomer;
+		btnCostomer = (Button)findViewById(R.id.btncostomer);
+		btnCostomer.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, CostomerCodeActivity.class);
+				startActivity(intent);
 				
 			}
 		});
