@@ -13,6 +13,8 @@ import java.util.concurrent.Semaphore;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentValues;
 import android.content.Context;
@@ -153,6 +155,24 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				updatedb();
+				
+//				AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+//				AlertDialog dialog = ad.setTitle("It will wait mintues to update the database.").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//					
+//					@Override
+//					public void onClick(DialogInterface dialog, int which) {	
+//						dialog.cancel();
+//						updatedb();
+//					}
+//				}).setNegativeButton("I'll wait next time", new DialogInterface.OnClickListener() {
+//					
+//					@Override
+//					public void onClick(DialogInterface dialog, int which) {
+//
+//					}
+//				}).show();
+				
+
 			}
 		});
 		
@@ -582,8 +602,9 @@ public class MainActivity extends Activity {
 			 try {
 				umlist =  xts.catchUsermaster();
 				cmlist = xts.catchCustomermaster();
-				aitlist = xts.catchAphaseItemTemplate();
 				rilist = xts.catchReturnableItem();
+				aitlist = xts.catchAphaseItemTemplate();
+
 			} catch (Exception ea) {
 				// TODO: handle exception
 			}
@@ -592,6 +613,7 @@ public class MainActivity extends Activity {
 			int aitlistsize = aitlist.size();
 			int rilistsize = rilist.size();
 			Log.e("ysy", "item set size = "+aitlistsize);
+			ProgressDialog pdialog = ProgressDialog.show(MainActivity.this, "loading", "please wait a few minutes"); 
 			for(int i = 0; i < umlistsie; i++)
 			{
 				newDb.insertUserMasterDB(umlist.get(i));
@@ -600,14 +622,17 @@ public class MainActivity extends Activity {
 			{
 				newDb.insertCustomerMasterDB(cmlist.get(i));
 			}
-			for(int i=0; i < aitlistsize ; i++)
-			{
-				newDb.insertItemDB(aitlist.get(i));
-			}
 			for(int i = 0; i < rilistsize ; i++)
 			{
 				newDb.insertReturnableItemDB(rilist.get(i));
+				Log.e("ysy", "return " + i);
 			}
+			for(int i=0; i < aitlistsize ; i++)
+			{
+				newDb.insertItemDB(aitlist.get(i));
+				Log.e("ysy", "item" + i);
+			}
+			pdialog.cancel();
 			newDb.closeDB();
 	  }
 	
