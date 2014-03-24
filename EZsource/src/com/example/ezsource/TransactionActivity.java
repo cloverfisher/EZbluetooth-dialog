@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Semaphore;
@@ -37,10 +38,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RemoteViews.RemoteView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,6 +86,9 @@ int qtn = 0;
 	String stateshiptostate = null;
 	String stateshiptocity = null;
 	String stateshiptozip = null;
+	
+	ListView list;
+	
 //	String statetime = null;
 	
 //	static Handler ahandler;
@@ -118,7 +125,7 @@ int qtn = 0;
 		}
 		
 	}
-	
+	public static TransactionActivity ins = null;
 	
 	/*
 	 * Handler
@@ -126,18 +133,52 @@ int qtn = 0;
 	static Handler ahandler = new Handler()
 	{
 		
-		String atempstring;
-		
+		String tempstring;
+	//	String tempstring;
 	    public void handleMessage(Message msg) {
 	    	Log.e("ysy", "msg"+ msg.what);
-        	atempstring = msg.obj.toString();
-        	atempstring = atempstring.trim();
+        	tempstring = msg.obj.toString();
+        	tempstring = tempstring.trim();
 	        switch (msg.what) {
 	        case 1: //state 1
 	        {
+	        	switch(state)
+	        	{
+	        	case 1:
+	        	{
+	        		tempstring = msg.obj.toString();
+	        		ins.enteruseridplus(tempstring);
+	        	}
+		        case 2:
+		        {
+		        	Log.e("ysy", "enterpin");
+		        //	tempstring = msg.obj.toString();
+		        	ins.enteruserpinplus(tempstring);
+	
+		        	break;
+		        }
+		        case 4:
+		        {
+		       // 	tempstring = msg.obj.toString();
+		        	ins.entershiptoplus(tempstring);
+		        	break;
+		        }
+		        case 5:
+		        {
+		         //	tempstring = msg.obj.toString();
+		        	ins.workordernumberplus(tempstring);
+		        	break;
+		        }
+		        case 6:
+		        {
+		     //   	tempstring = msg.obj.toString();
+		        	ins.scanitemplus(tempstring);
+		        	break;
+		        }        	
+	        	}
 	     //   	tempstring = msg.obj.toString();
 	        //	enteruseridplus(tempstring);
-	        	Log.e("ysy","lalalala" + atempstring);
+	        	Log.e("ysy","lalalala" + tempstring);
 	        	break;
 	        }
 //	        case 2:
@@ -170,43 +211,51 @@ int qtn = 0;
 		    super.handleMessage(msg); 
 	    }
 	};
-	
+	SimpleAdapter mSchedule;
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_transaction);
+		ins = this;
 		if(!costomerCodeOn())
 		{
 			finish();
 		}
-	//	state = 1;
-	//	Toast.makeText(this, "Some message!", Toast.LENGTH_LONG).show();
-	//	saveFileToDrive();
-	//	OutputHistoryPlus();
-	//	bluetooth();
+
 
 		ad =new AlertDialog.Builder(this);
-	//	AlertDialog.Builder
-	//	NumberDialog.b
-		
-	//	enterQuantity(null);
-	                                                     	enteruserid();
-	//	NumberDialog dialog = new NumberDialog(TransactionActivity.this);
-	//	dialog.show();
+
+	    ins.enteruserid();
+
 
 		
-		ListView list =  (ListView)findViewById(R.id.mylistview);
+	    list  = (ListView)findViewById(R.id.mylistview);
+		list.setOnItemLongClickListener(new OnItemLongClickListener() {
+			
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0,
+					View arg1, int position, long arg3) {
+			
+				output.getCargoList().remove(position-1);
+				Log.e("ysy", "listview" + " " + position + " " + arg3);
+				mylist.remove(position);
+				mSchedule.notifyDataSetChanged();
+				return false;
+			}
+		});
 		HashMap<String, String> map = new HashMap<String ,String>();
 		map.put("date", "date");
 		map.put("qty", "qty");
 		map.put("description", "description");
 		mylist.add(map);
-		
-		SimpleAdapter mSchedule = new SimpleAdapter(this, mylist,
-				R.layout.mylistview,
-				new String[]{"date","qty","description"},
-				new int[]{R.id.listdate,R.id.listqty,R.id.listdescription});
+		mSchedule = new SimpleAdapter(TransactionActivity.this, mylist,
+					R.layout.mylistview,
+					new String[]{"date","qty","description"},
+					new int[]{R.id.listdate,R.id.listqty,R.id.listdescription});
 		list.setAdapter(mSchedule);
+
 	
 	}
 
@@ -266,7 +315,7 @@ int qtn = 0;
 		return true;
 	}
 
-	
+	/*
 	
 	public String bluetoothGetMessage(){
 		String tempStr = null;
@@ -277,8 +326,7 @@ int qtn = 0;
 		}
 		return tempStr;
 	}
-	/*
-	 * bluetooth use as client*/
+
 	private class ConnectThread extends Thread {
 	    private final BluetoothSocket mmSocket;
 	    private final BluetoothDevice mmDevice;
@@ -334,7 +382,7 @@ int qtn = 0;
 	//        manageConnectedSocket(mmSocket);
 	    }
 
-	    /*  Will cancel an in-progress connection, and close the socket */
+	    //  Will cancel an in-progress connection, and close the socket 
 	    public void cancel() {
 	        try {
 	            mmSocket.close();
@@ -342,9 +390,7 @@ int qtn = 0;
 	    }
 	}
 	
-	/*
-	 * data transmit
-	 * */
+//data transmit
 	private class ConnectedThread extends Thread {
 	    private final BluetoothSocket mmSocket;
 	    private final InputStream mmInStream;
@@ -381,8 +427,8 @@ int qtn = 0;
 	                bytes = mmInStream.read(buffer);
 	                String data = new String(buffer, 0, bytes);
 	                Log.e("ysy", data);
-/*	                Handler mHandler = new Handler();
-	                // Send the obtained bytes to the UI activity*/
+
+	                // Send the obtained bytes to the UI activity
 //	                mmhandler.obtainMessage(TransactionActivity.DATA_RECEIVE,data)
 //	                        .sendToTarget();
 	                mmhandler.obtainMessage(state, data).sendToTarget();
@@ -393,14 +439,14 @@ int qtn = 0;
 	        }
 	    }
 
-	    /*  Call this from the main activity to send data to the remote device */
+	    //  Call this from the main activity to send data to the remote device 
 	    public void write(byte[] bytes) {
 	        try {
 	            mmOutStream.write(bytes);
 	        } catch (IOException e) { }
 	    }
 
-	    /*  Call this from the main activity to shutdown the connection */
+	    //  Call this from the main activity to shutdown the connection 
 	    public void cancel() {
 	        try {
 	            mmSocket.close();
@@ -408,7 +454,7 @@ int qtn = 0;
 	    }
 	}
 	
-	
+	*/
 	private class UserMasterDB
 	{
 		SQLiteDatabase db;
@@ -580,149 +626,10 @@ int qtn = 0;
 		}
 	}
 	
-	int testi =0;
-	int minustate = 0;
-	public void testdialog()
-	{
-		
-		
-		View view = LayoutInflater.from(this).inflate(R.layout.numdialoglayout, null);
-		ad.setView(view);
-		
-		final TextView tv = (TextView)view.findViewById(R.id.textView1);
-		final TextView tvminus = (TextView)view.findViewById(R.id.textView0);
-		 testi =0;
-				 minustate = 0;
-	//	Button button1 = (Button)view.findViewById(R.id.button1);
- 	  	 Button btn1 = (Button)view.findViewById(R.id.SearchButton); 
- 	  	 Button btn0 = (Button)view.findViewById(R.id.button0); 
- 	  	 Button btn2 = (Button)view.findViewById(R.id.button2); 
- 	  	 Button btn3 = (Button)view.findViewById(R.id.button3); 
- 	  	 Button btn4 = (Button)view.findViewById(R.id.button4); 
- 	  	 Button btn5 = (Button)view.findViewById(R.id.button5); 
- 	  	 Button btn6 = (Button)view.findViewById(R.id.button6); 
- 	  	 Button btn7 = (Button)view.findViewById(R.id.button7); 
- 	  	 Button btn8 = (Button)view.findViewById(R.id.button8); 
- 	  	 Button btn9 = (Button)view.findViewById(R.id.button9);
- 	  	 Button btnminus = (Button)view.findViewById(R.id.buttonminus); 
- 	  	 Button btndelete = (Button)view.findViewById(R.id.buttondelete); 
- 	  	 
- 	  	 
-   	  	btn1.setOnClickListener(new View.OnClickListener() {
-			
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi*10 + 1;
- 					Log.e("ysy", "testi " +testi);
- 					tv.setText(""+testi);
- 				}
- 			});
- 	  	  	btn2.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi*10 + 2;
- 					tv.setText(""+testi);
 
- 				}
- 			});
- 	  	  	btn3.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi*10 + 3;
- 					tv.setText(""+testi);
-
- 				}
- 			});
- 	  	  	btn4.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi*10 + 4;
- 					tv.setText(""+testi);
-
- 				}
- 			});
- 	  	  	btn5.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi*10 + 5;
- 					tv.setText(""+testi);
-
- 				}
- 			});
- 	  	  	btn6.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi*10 + 6;
- 					tv.setText(""+testi);
-
- 				}
- 			});
- 	  	  	btn7.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi*10 + 7;
- 					tv.setText(""+testi);
- 				}
- 			});
- 	  	  	btn8.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi*10 + 8;
- 					tv.setText(""+testi);
- 				}
- 			});
- 	  	  	btn9.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi*10 + 9;
- 					tv.setText(""+testi);
- 				}
- 			});
- 	  	  	btn0.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi*10 + 0;
- 					tv.setText(""+testi);
- 				}
- 			});
- 	  	  	btndelete.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					testi = testi/10 ;
- 					tv.setText(""+testi);
- 				}
- 			});
- 	  	  	btnminus.setOnClickListener(new View.OnClickListener() {
- 				
- 				@Override
- 				public void onClick(View v) {
- 					if(minustate == 0)
- 					{
- 						tvminus.setText("-");
- 						minustate =1;
- 					}
- 					else
- 					{
- 						tvminus.setText("");
- 						minustate = 0;
- 					}
-
- 				}
- 			});
-		ad.show();
-	}
 	
 	//state = 1
+	AlertDialog adialog;
 	public void enteruserid()
 	{
 		state = 1;
@@ -731,11 +638,12 @@ int qtn = 0;
   	  	final EditText et   = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);
 			ad.setTitle("enter UserID").setView(promptsView);
 		
-			AlertDialog aadialog = 	ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+			adialog = 	ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		               // User clicked OK button
 		        	   tempstring = et.getText().toString();
-	        		   dialog.dismiss();
+		        	   
+		        	   adialog.cancel();
 		        	   Log.e("ysy", tempstring);
 		 //       	   this.state = ENTERPIN;
 		        	   if(checkUserID(tempstring))
@@ -743,19 +651,20 @@ int qtn = 0;
 		        		   state = ENTERPIN;
 		        		   stateuserid = tempstring;
 		        		   output.setUser(tempstring);
-		        		   testdialog();
-		       // 		   enteruserpin();
+		       // 		   testdialog();
+		        		   ins.enteruserpin();
 		        		   //  state = ENTERPIN;
 		        	   }
 		        	   else {
 		        		   Log.e("ysy","wrong UserID");
-		        		   enteruserid();
+		        		   ins.enteruserid();
 		        	   }
 		           }
 		       }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
+					adialog.cancel();
 					// TODO Auto-generated method stub
 					//User clicked cancel button
 					
@@ -764,8 +673,9 @@ int qtn = 0;
 
 	}
 	
-	public void enteruseridplus(String tempstring)
+	public  void enteruseridplus(String tempstring)
 	{
+		adialog.cancel();
  	   if(checkUserID(tempstring))
  	   {
  	//	   state = ENTERPIN;
@@ -790,10 +700,10 @@ int qtn = 0;
 		View promptsView = li.inflate(R.layout.simpledialoglayout, null);
   	  	final EditText et   = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);	
 		ad.setTitle("enter PIN").setView(promptsView);
-		ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+		adialog = ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 	           public void onClick(DialogInterface dialog, int id) {
 	               // User clicked OK button
-	        	   dialog.dismiss();
+	        	   adialog.cancel();
 	        	   tempstring = et.getText().toString();
 	        	   Log.e("ysy", tempstring);
 	        	   if(checkPin(tempstring))
@@ -817,6 +727,7 @@ int qtn = 0;
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				adialog.cancel();
 				// TODO Auto-generated method stub
 				//User clicked cancel button			
 			}
@@ -825,6 +736,7 @@ int qtn = 0;
 	
 	public void enteruserpinplus(String tempString)
 	{
+		adialog.cancel();
 		   Log.e("ysy", "bluetooth" + tempString.length());
  	   if(checkPin(tempString))
  	   {
@@ -857,14 +769,14 @@ int qtn = 0;
 			{
 				st[i] = list.get(i).getCustName();
 			}
-			new AlertDialog.Builder(this).setTitle("Choose customerName").setItems(st,
+			adialog = 	new AlertDialog.Builder(this).setTitle("Choose customerName").setItems(st,
 					new DialogInterface.OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							// TODO Auto-generated method stub
 							Log.e("ysy",st[which]);
-							dialog.dismiss();
+							adialog.cancel();
 							//find the costomer in the  usermaster to see whether it is returnable customer master 
 							UserMasterDB umdb = new UserMasterDB();
 							umdb.openDB();
@@ -900,12 +812,11 @@ int qtn = 0;
 			//whether it can be returned?
 			Log.e("ysy", "returnable " + statereturnable);
 			//showTwoButtonDialog("Returnable transaction?");
-			new AlertDialog.Builder(this).setTitle("Returnable transaction?").setPositiveButton("yes", new DialogInterface.OnClickListener() {
+			adialog = new AlertDialog.Builder(this).setTitle("Returnable transaction?").setPositiveButton("yes", new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
-					dialog.dismiss();
+					adialog.dismiss();
 					statereturnable = "Y";
 //					showdialog(state);
 					entershipto();
@@ -915,6 +826,7 @@ int qtn = 0;
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
+							adialog.cancel();
 							// TODO Auto-generated method stub
 							statereturnable = "N";
 							entershipto();
@@ -942,14 +854,14 @@ int qtn = 0;
 		View promptsView = li.inflate(R.layout.simpledialoglayout, null);
   	  	final EditText et   = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);
   	  	ad.setTitle("Scan/Enter Shipto or Cost Code").setView(promptsView);
-  	  	ad.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+  	  adialog =	ad.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 				String tempString = et.getText().toString();
 				Log.e("ysy","shiptonum" + tempString);
-     		   dialog.dismiss();
+				adialog.cancel();
      		   
 				if(checkShiptoNum(tempString))
 				{
@@ -993,6 +905,7 @@ int qtn = 0;
 	
 	public void entershiptoplus(String tempString)
 	{
+		adialog.cancel();
 		if(checkShiptoNum(tempString))
 		{
 			//TODO find the autocrib
@@ -1053,17 +966,15 @@ int qtn = 0;
 		LayoutInflater li  = LayoutInflater.from(this);
 		View promptsView = li.inflate(R.layout.simpledialoglayout, null);
 		final EditText et = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);
-		ad.setTitle("Enter work order number").setView(promptsView).
+		adialog = ad.setTitle("Enter work order number").setView(promptsView).
 		setPositiveButton("ok", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO add scanitem function get the string to somewhere
-				dialog.dismiss();
+				adialog.cancel();
 				String tempString = et.getText().toString();
 				workordernumberplus(tempString);
-//				Log.e("ysy", "work order" + et.getText().toString());
-//				output.setWorkOrder(et.getText().toString());
 //				scanitem();
 			}
 		}).show();
@@ -1071,6 +982,7 @@ int qtn = 0;
 	
 	public void workordernumberplus(String tempString)
 	{
+		adialog.cancel();
 		Log.e("ysy", "work order" + tempString);
 		output.setWorkOrder(tempString);
 		scanitem();
@@ -1079,18 +991,20 @@ int qtn = 0;
 	
 	//Item scanning process
 	// state 6
+	//AlertDialog alDialog6;
 	public void scanitem()
 	{
 		state = 6;
+		
 		LayoutInflater li = LayoutInflater.from(this);
 		View promptsView = li.inflate(R.layout.simpledialoglayout, null);
 		final EditText et = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);
-		ad.setTitle("Scan or enter ItemID").setView(promptsView).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		adialog  = ad.setTitle("Scan or enter ItemID").setView(promptsView).setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				dialog.dismiss();
+			//	alDialog.cancel();
+				adialog.cancel();
 				stateitemid = et.getText().toString();
 				Log.e("ysy", "itemid "+ stateitemid);
 				if(checkItemId(stateitemid))
@@ -1109,6 +1023,8 @@ int qtn = 0;
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				adialog.dismiss();
+				adialog.cancel();
 				if(cargolist.size()!=0)
 				{
 					output.setCargoList(cargolist);
@@ -1116,9 +1032,8 @@ int qtn = 0;
 					output.setShipdate(stateshipdate);
 					//Log.e("ysy", "insert item into sql");
 					showToast("insert item into sql");
-					insertOutputDBPlus(output);
-					dialog.dismiss();
-					dialog.cancel();
+			//		insertOutputDBPlus(output);
+					whetherUpload();
 				}
 				else {
 					//TODO please input the at least one item ;
@@ -1129,6 +1044,7 @@ int qtn = 0;
 	//TODO have some question in this part.
 	public void scanitemplus(String tempstring)
 	{
+		adialog.cancel();
 		stateitemid = tempstring;
 		if(checkItemId(stateitemid))
 		{
@@ -1143,6 +1059,31 @@ int qtn = 0;
 		}	
 	}
 	
+	public void whetherUpload()
+	{
+		//LayoutInflater li = LayoutInflater.from(this);
+		adialog = ad.setTitle("Do you want to upload or edit this order?").setView(null).setPositiveButton("Upload", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				adialog.cancel();		
+			}
+		}).setNegativeButton("Edit", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				adialog.cancel();
+			}
+		}).show();
+	}
+	
+	public void deleteitem()
+	{
+		
+	}
+	
 	AphaseItemTemplate getItemFromDB()
 	{
 		UserMasterDB umdb = new UserMasterDB();
@@ -1152,7 +1093,10 @@ int qtn = 0;
 		return ait;
 	}
 
-	public void enterQuantity(AphaseItemTemplate newAphaseItemTemplate)
+	
+	int testi =0;
+	int minustate = 0;
+	public void numdialog(AphaseItemTemplate newAphaseItemTemplate)
 	{
 		
 		
@@ -1161,9 +1105,10 @@ int qtn = 0;
 		
 		final TextView tv = (TextView)view.findViewById(R.id.textView1);
 		final TextView tvminus = (TextView)view.findViewById(R.id.textView0);
-		final String title = newAphaseItemTemplate.getDescription();
 		 testi =0;
 				 minustate = 0;
+				 
+		final String title = newAphaseItemTemplate.getDescription();
 	//	Button button1 = (Button)view.findViewById(R.id.button1);
  	  	 Button btn1 = (Button)view.findViewById(R.id.SearchButton); 
  	  	 Button btn0 = (Button)view.findViewById(R.id.button0); 
@@ -1177,7 +1122,8 @@ int qtn = 0;
  	  	 Button btn9 = (Button)view.findViewById(R.id.button9);
  	  	 Button btnminus = (Button)view.findViewById(R.id.buttonminus); 
  	  	 Button btndelete = (Button)view.findViewById(R.id.buttondelete); 
- 	  	 
+ 	  	 TextView tv2 = (TextView) view.findViewById(R.id.textView2);
+ 	  	 tv2.setText("enter quantaty");
  	  	 
    	  	btn1.setOnClickListener(new View.OnClickListener() {
 			
@@ -1290,41 +1236,48 @@ int qtn = 0;
 
  				}
  			});
- 	  	  	ad.setTitle("QTY").setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					HashMap<String, String> map = new HashMap<String ,String>();
-					map.put("date", stateshipdate);
-					map.put("qty", tv.getText().toString());
-					map.put("description", title);
-					mylist.add(map);
-					Cargo cargo = new Cargo();
-					cargo.setQty(tv.getText().toString());
-					cargo.setItem(stateitemid);
-					cargo.setDescription(title);
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-					cargo.setEnterdate(sdf.format(new java.util.Date()));
-					SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
-					cargo.setEntertime(sdf2.format(new java.util.Date()));
-					cargo.setUOM( "EA");
-					cargo.setPrice("1");
-					cargo.setCustPart("NULL");
-					cargo.setOnOrder("N");
-					cargolist.add(cargo);
-//					
-//					SimpleAdapter mSchedule = new SimpleAdapter(this, mylist,
-//							R.layout.mylistview,
-//							new String[]{"date","qty","description"},
-//							new int[]{R.id.listdate,R.id.listqty,R.id.listdescroption});
-//					list.setAdapter(mSchedule);
-					scanitem();					
-				}
-			});
-		ad.show();
-
-  	  	;//.setTitle("quantity");
-  	  	ad.show();
+ 	  	ad.setTitle(title).setPositiveButton("ok", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				adialog.cancel();
+				HashMap<String, String> map = new HashMap<String ,String>();
+				String tempString = tvminus.getText().toString();
+				Log.e("ysy", tempString + tv.getText().toString());
+				map.put("date", stateshipdate);
+				map.put("qty", tempString + tv.getText().toString());
+				map.put("description", title);
+				mylist.add(map);
+		//		mylist.
+				Cargo cargo = new Cargo();
+				cargo.setQty(tv.getText().toString());
+				cargo.setItem(stateitemid);
+				cargo.setDescription(title);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+				cargo.setEnterdate(sdf.format(new java.util.Date()));
+				SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
+				cargo.setEntertime(sdf2.format(new java.util.Date()));
+				cargo.setUOM( "EA");
+				cargo.setPrice("1");
+				cargo.setCustPart("NULL");
+				cargo.setOnOrder("N");
+				cargolist.add(cargo);
+				mSchedule.notifyDataSetChanged();
+//				
+//				SimpleAdapter mSchedule = new SimpleAdapter(this, mylist,
+//						R.layout.mylistview,
+//						new String[]{"date","qty","description"},
+//						new int[]{R.id.listdate,R.id.listqty,R.id.listdescroption});
+//				list.setAdapter(mSchedule);
+				scanitem();					
+			}
+		});//.setNegativeButton("", listener)
+ 	  	adialog = ad.show();
+	}
+	
+	public void enterQuantity(AphaseItemTemplate newAphaseItemTemplate)
+	{
+		numdialog(newAphaseItemTemplate);
 	}
 	
 	public void showdialog(int astate)
@@ -1662,7 +1615,7 @@ int qtn = 0;
 	}
 	
 
-	
+	/*
 	public void bluetooth()
 	{
 		IntentFilter intentFilter = new IntentFilter();
@@ -1698,19 +1651,7 @@ int qtn = 0;
 				st[i] = device.getName();
 			}
 		}
-/*			new AlertDialog.Builder(this).setTitle("Choose customerName").setItems(st,
-					new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// 
-							Log.e("ysy",st[which]);
-							bluetoothdevice = which;
-							
-							
-						}
-					}
-					).show();		*/
+
 
 		   // Create a BroadcastReceiver for ACTION_FOUND
 		final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -1770,9 +1711,7 @@ int qtn = 0;
 //		}
 		
 		
-		/*
-		 * Handler
-		 * */
+
 		Handler handler = new Handler()
 		{
 			
@@ -1822,7 +1761,7 @@ int qtn = 0;
 
 	}
 
-
+*/
 
 }
 
