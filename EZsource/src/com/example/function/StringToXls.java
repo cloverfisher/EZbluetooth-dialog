@@ -18,6 +18,7 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
+import android.util.Log;
 
 import com.example.source.Cargo;
 import com.example.source.Output;
@@ -34,6 +35,7 @@ public class StringToXls {
 
 	  public void write(Output output) throws IOException, WriteException {
 	    File file = new File(inputFile);
+	    Log.e("ysy", inputFile);
 	    WorkbookSettings wbSettings = new WorkbookSettings();
 
 	    wbSettings.setLocale(new Locale("en", "EN"));
@@ -226,11 +228,13 @@ public class StringToXls {
 	  }
 
 
-	public void getOneSheet(Output output)
+	public String getOneSheet(Output output)
 	{
 		StringToXls test = new StringToXls();
 	//	String nameString = output.get
-	    test.setOutputFile("test.xls");
+	//	if(output.)
+		String nameString = "/mnt/sdcard/Ezsource/test.xls";
+	    test.setOutputFile(nameString);
 	    try {
 			test.write(output);
 		} catch (WriteException e) {
@@ -240,6 +244,7 @@ public class StringToXls {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	    return nameString;
 	}
 	
 	public StringToXls()

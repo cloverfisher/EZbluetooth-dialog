@@ -1,5 +1,7 @@
 package com.example.ezsource;
 
+
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,6 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
+import jxl.write.WriteException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -49,6 +52,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.function.GMailSender;
+import com.example.function.StringToXls;
 import com.example.source.AphaseItemTemplate;
 import com.example.source.Cargo;
 import com.example.source.NumberDialog;
@@ -239,6 +244,9 @@ int qtn = 0;
 					View arg1, int position, long arg3) {
 			
 				output.getCargoList().remove(position-1);
+				output.setCargoList(cargolist);
+				output.setOrderTotal(cargolist.size());
+				output.setShipdate(stateshipdate);
 				Log.e("ysy", "listview" + " " + position + " " + arg3);
 				mylist.remove(position);
 				mSchedule.notifyDataSetChanged();
@@ -258,7 +266,7 @@ int qtn = 0;
 
 	
 	}
-
+	/*
 	  private void saveFileToDrive() {
 		    Thread t = new Thread(new Runnable() {
 		      @Override
@@ -298,6 +306,7 @@ int qtn = 0;
 		    });
 		    t.start();
 		  }
+		  */
 	  public void showToast(final String toast) {
 		    runOnUiThread(new Runnable() {
 		      @Override
@@ -1067,6 +1076,7 @@ int qtn = 0;
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
+				sendemail(output);//just for test
 				adialog.cancel();		
 			}
 		}).setNegativeButton("Edit", new DialogInterface.OnClickListener() {
@@ -1280,121 +1290,170 @@ int qtn = 0;
 		numdialog(newAphaseItemTemplate);
 	}
 	
-	public void showdialog(int astate)
+	public void sendemail(Output output)
 	{
-		/*
-		 * AlertDialog*/
-		LayoutInflater li = LayoutInflater.from(this);
-		View promptsView = li.inflate(R.layout.simpledialoglayout, null);
-  	  	final EditText et   = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);
-		switch(state)
+		Log.e("ysy", "sendmail");
+		StringToXls stx = new StringToXls();
+		if(autocribflag().equals("Y"))
 		{
-		case ENTERUSERID:// enter UserID
-		{
-			ad.setTitle("enter UserID").setView(promptsView);
-			ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		               // User clicked OK button
-		        	   tempstring = et.getText().toString();
-	        		   dialog.dismiss();
-		        	   Log.e("ysy", tempstring);
-		 //       	   this.state = ENTERPIN;
-		        	   if(checkUserID(tempstring))
-		        	   {
-		        		   state = ENTERPIN;
-		        		   stateuserid = tempstring;
-		        		   showdialog(ENTERPIN);
-		        		 //  state = ENTERPIN;
-		        	   }
-		        	   else {
-		        		   Log.e("ysy","wrong UserID");
-		        		   showdialog(ENTERUSERID);
-		        	   }
-		           }
-		       }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// 
-					//User clicked cancel button
-					
-				}
-			}).show();
-			break;
-		}
-		case ENTERPIN:// enter UserID
-		{
-			ad.setTitle("enter PIN").setView(promptsView);
-			ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		               // User clicked OK button
-		        	   tempstring = et.getText().toString();
-		        	   Log.e("ysy", tempstring);
-		        	   if(checkPin(tempstring))
-		        	   {
-		        		   state = CHOOSECUSTOMER;
-		        		   UserMasterDB umdb = new UserMasterDB();
-		        		   umdb.openDB();
-		        		ArrayList<UserMaster> aList= umdb.customerNameList(stateuserid);
-		        		   umdb.closeDB();
-		        		   showlistdialog(state,aList);
-		        	   }
-		        	   else
-		        	   {
-		        		   state = ENTERUSERID;
-		        		   
-		        		   showdialog(ENTERUSERID);
-		        	   }
-		 //       	   this.state = ENTERPIN;
-		  //      	   showdialog(ENTERPIN);
-		           }
-		       }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// 
-					//User clicked cancel button
-					
-				}
-			}).show();
-			break;
-		}
-		case CHOOSERETURNABLE:
-		{
-			state = COSTCODE;
 			
-			LayoutInflater li2 = LayoutInflater.from(this);
-			View promptsView2 = li2.inflate(R.layout.simpledialoglayout, null);
-	  	  	final EditText et2   = (EditText)promptsView2.findViewById(R.id.editTextDialogUserInput);
-	  	  	et2.setKeyListener(new DigitsKeyListener(false, true));
-			
-			
-			ad.setTitle("Scan/Enter Shipto or Cost code").setView(promptsView);
-			ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// 
-					//use the database to confirm the shipto number
-					String tempString = et2.getText().toString();
-					if(checkShiptoNum(tempString))
-					{
-		//				checkautocrib;
-					}
-					else
-					{
-	//					Toast.makeText(this, " is not exist in database", Toast.LENGTH_LONG).show();
-					}
-				}
-			}).show();
-			break;
 		}
-//		case CHOOSESHIPTONUMBER:
-		}	
-	//	ad.setTitle(title)
-
+		else
+		{
+			
+		}
+		
+//	    WriteExcel test = new WriteExcel();
+//	    test.setOutputFile("/Users/shiyaoyu/test.xls");
+	//    test.write();
+		String name = "/mnt/sdcard/Ezsource/test.xls";
+		stx.setOutputFile(name);
+		try {
+			stx.write(output);
+		} catch (WriteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try{
+			GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
+	//		GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
+			sender.sendMail("bla", "bla", "yuysyu@gmail.com", "yuysyu@gmail.com",name);
+		}
+		catch(Exception e)
+		{
+			Log.e("SendMail", e.getMessage());
+		}
+	//	String name = stx.getOneSheet(output);
+//		try{
+//			GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
+//	//		GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
+//			sender.sendMail("bla", "bla", "yuysyu@gmail.com", "yuysyu@gmail.com",name);
+//		}
+//		catch(Exception e)
+//		{
+//			Log.e("SendMail", e.getMessage());
+//		}
 	}
 	
+//	public void showdialog(int astate)
+//	{
+//		/*
+//		 * AlertDialog*/
+//		LayoutInflater li = LayoutInflater.from(this);
+//		View promptsView = li.inflate(R.layout.simpledialoglayout, null);
+//  	  	final EditText et   = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);
+//		switch(state)
+//		{
+//		case ENTERUSERID:// enter UserID
+//		{
+//			ad.setTitle("enter UserID").setView(promptsView);
+//			ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//		           public void onClick(DialogInterface dialog, int id) {
+//		               // User clicked OK button
+//		        	   tempstring = et.getText().toString();
+//	        		   dialog.dismiss();
+//		        	   Log.e("ysy", tempstring);
+//		 //       	   this.state = ENTERPIN;
+//		        	   if(checkUserID(tempstring))
+//		        	   {
+//		        		   state = ENTERPIN;
+//		        		   stateuserid = tempstring;
+//		        		   showdialog(ENTERPIN);
+//		        		 //  state = ENTERPIN;
+//		        	   }
+//		        	   else {
+//		        		   Log.e("ysy","wrong UserID");
+//		        		   showdialog(ENTERUSERID);
+//		        	   }
+//		           }
+//		       }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					// 
+//					//User clicked cancel button
+//					
+//				}
+//			}).show();
+//			break;
+//		}
+//		case ENTERPIN:// enter UserID
+//		{
+//			ad.setTitle("enter PIN").setView(promptsView);
+//			ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//		           public void onClick(DialogInterface dialog, int id) {
+//		               // User clicked OK button
+//		        	   tempstring = et.getText().toString();
+//		        	   Log.e("ysy", tempstring);
+//		        	   if(checkPin(tempstring))
+//		        	   {
+//		        		   state = CHOOSECUSTOMER;
+//		        		   UserMasterDB umdb = new UserMasterDB();
+//		        		   umdb.openDB();
+//		        		ArrayList<UserMaster> aList= umdb.customerNameList(stateuserid);
+//		        		   umdb.closeDB();
+//		        		   showlistdialog(state,aList);
+//		        	   }
+//		        	   else
+//		        	   {
+//		        		   state = ENTERUSERID;
+//		        		   
+//		        		   showdialog(ENTERUSERID);
+//		        	   }
+//		 //       	   this.state = ENTERPIN;
+//		  //      	   showdialog(ENTERPIN);
+//		           }
+//		       }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					// 
+//					//User clicked cancel button
+//					
+//				}
+//			}).show();
+//			break;
+//		}
+//		case CHOOSERETURNABLE:
+//		{
+//			state = COSTCODE;
+//			
+//			LayoutInflater li2 = LayoutInflater.from(this);
+//			View promptsView2 = li2.inflate(R.layout.simpledialoglayout, null);
+//	  	  	final EditText et2   = (EditText)promptsView2.findViewById(R.id.editTextDialogUserInput);
+//	  	  	et2.setKeyListener(new DigitsKeyListener(false, true));
+//			
+//			
+//			ad.setTitle("Scan/Enter Shipto or Cost code").setView(promptsView);
+//			ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					// 
+//					//use the database to confirm the shipto number
+//					String tempString = et2.getText().toString();
+//					if(checkShiptoNum(tempString))
+//					{
+//		//				checkautocrib;
+//					}
+//					else
+//					{
+//	//					Toast.makeText(this, " is not exist in database", Toast.LENGTH_LONG).show();
+//					}
+//				}
+//			}).show();
+//			break;
+//		}
+////		case CHOOSESHIPTONUMBER:
+//		}	
+//	//	ad.setTitle(title)
+//
+//	}
+//	
 	public void showTimeDialog()
 	{
 		
@@ -1436,105 +1495,105 @@ int qtn = 0;
 		dialog.show();
 	}
 	
-
-	
-	public void showTwoButtonDialog(String title)
-	{
-		switch (state) {
-		case CHOOSECUSTOMER:
-		{
-			state = CHOOSERETURNABLE;
-			if(statereturnable == "Y")
-			{
-				//whether it can be returned?
-				
-				//showTwoButtonDialog("Returnable transaction?");
-				showdialog(state);
-			}
-			else if (statereturnable == "N") {
-				//
-				
-			}
-			new AlertDialog.Builder(this).setTitle(title).setPositiveButton("yes", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					
-					statereturnable = "Y";
-					showdialog(state);
-				}
-			}).setNegativeButton("No",new DialogInterface.OnClickListener()
-					{
-
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// 
-							statereturnable = "N";
-						}
-				
-					}).show();
-			break;
-		}
-		default:
-			break;
-		}
-
-	}
-	
-	public void showlistdialog(int state, ArrayList<UserMaster> alist)
-	{
-		final ArrayList<UserMaster> list = alist;
-		final String[] st = new String[list.size()];
-		switch (state) {
-		case CHOOSECUSTOMER:
-		{
-			for(int i = 0 ; i < list.size(); i++)
-			{
-				st[i] = list.get(i).getCustName();
-			}
-			new AlertDialog.Builder(this).setTitle("Choose customerName").setItems(st,
-					new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// 
-							Log.e("ysy",st[which]);
-							
-							//find the costomer in the  usermaster to see whether it is returnable customer master 
-							UserMasterDB umdb = new UserMasterDB();
-							umdb.openDB();
-							statecustomer = list.get(which).getCustomer();
-							statereturnable = umdb.returnDBString("usermaster", "UserID", stateuserid, "Customer", list.get(which).getCustomer(), "Returnable");
-							Log.e("ysy", "returnable " + statereturnable);
-							if(statereturnable == "Y")
-							{
-								//whether it can be returned?
-								
-								showTwoButtonDialog("Returnable transaction?");
-							}
-							else if (statereturnable == "N") {
-								//
-								
-							}
-//							showTwoButtonDialog("Returnable transaction?");
-							umdb.closeDB();
-							
-						}
-					}
-					).show();
-			break;
-		}
-		default:
-			break;
-		}
-		
-		{
-			UserMasterDB umdb = new UserMasterDB();
-			umdb.openDB();
-	//		String stateAutoCrib = umdb.returnDBString("customermaster", "Customer", statecustomer, "", row2, returncolumn)
-		}
-
-	}
+//
+//	
+//	public void showTwoButtonDialog(String title)
+//	{
+//		switch (state) {
+//		case CHOOSECUSTOMER:
+//		{
+//			state = CHOOSERETURNABLE;
+//			if(statereturnable == "Y")
+//			{
+//				//whether it can be returned?
+//				
+//				//showTwoButtonDialog("Returnable transaction?");
+//				showdialog(state);
+//			}
+//			else if (statereturnable == "N") {
+//				//
+//				
+//			}
+//			new AlertDialog.Builder(this).setTitle(title).setPositiveButton("yes", new DialogInterface.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					
+//					statereturnable = "Y";
+//					showdialog(state);
+//				}
+//			}).setNegativeButton("No",new DialogInterface.OnClickListener()
+//					{
+//
+//						@Override
+//						public void onClick(DialogInterface dialog, int which) {
+//							// 
+//							statereturnable = "N";
+//						}
+//				
+//					}).show();
+//			break;
+//		}
+//		default:
+//			break;
+//		}
+//
+//	}
+//	
+//	public void showlistdialog(int state, ArrayList<UserMaster> alist)
+//	{
+//		final ArrayList<UserMaster> list = alist;
+//		final String[] st = new String[list.size()];
+//		switch (state) {
+//		case CHOOSECUSTOMER:
+//		{
+//			for(int i = 0 ; i < list.size(); i++)
+//			{
+//				st[i] = list.get(i).getCustName();
+//			}
+//			new AlertDialog.Builder(this).setTitle("Choose customerName").setItems(st,
+//					new DialogInterface.OnClickListener() {
+//						
+//						@Override
+//						public void onClick(DialogInterface dialog, int which) {
+//							// 
+//							Log.e("ysy",st[which]);
+//							
+//							//find the costomer in the  usermaster to see whether it is returnable customer master 
+//							UserMasterDB umdb = new UserMasterDB();
+//							umdb.openDB();
+//							statecustomer = list.get(which).getCustomer();
+//							statereturnable = umdb.returnDBString("usermaster", "UserID", stateuserid, "Customer", list.get(which).getCustomer(), "Returnable");
+//							Log.e("ysy", "returnable " + statereturnable);
+//							if(statereturnable == "Y")
+//							{
+//								//whether it can be returned?
+//								
+//								showTwoButtonDialog("Returnable transaction?");
+//							}
+//							else if (statereturnable == "N") {
+//								//
+//								
+//							}
+////							showTwoButtonDialog("Returnable transaction?");
+//							umdb.closeDB();
+//							
+//						}
+//					}
+//					).show();
+//			break;
+//		}
+//		default:
+//			break;
+//		}
+//		
+//		{
+//			UserMasterDB umdb = new UserMasterDB();
+//			umdb.openDB();
+//	//		String stateAutoCrib = umdb.returnDBString("customermaster", "Customer", statecustomer, "", row2, returncolumn)
+//		}
+//
+//	}
 
 	void insertOutputDBPlus(Output output)
 	{
