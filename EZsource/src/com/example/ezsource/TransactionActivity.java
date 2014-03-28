@@ -135,7 +135,7 @@ int qtn = 0;
 	/*
 	 * Handler
 	 * */
-	static Handler ahandler = new Handler()
+	public static Handler ahandler = new Handler()
 	{
 		
 		String tempstring;

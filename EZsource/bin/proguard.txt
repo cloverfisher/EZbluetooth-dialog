@@ -22,3 +22,6 @@
 # view AndroidManifest.xml #generated:24
 -keep class com.example.ezsource.TransactionActivity { <init>(...); }
 
+# view AndroidManifest.xml #generated:49
+-keep class com.example.function.BluetoothService { <init>(...); }
+

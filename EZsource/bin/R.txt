@@ -76,8 +76,8 @@ int id alignBounds 0x7f040002
 int id alignMargins 0x7f040003
 int id bottom 0x7f040005
 int id btnbluetooth 0x7f040026
-int id btnbluetoothclear 0x7f040020
-int id btnbluetoothreturn 0x7f040021
+int id btnbluetoothconnect 0x7f040020
+int id btnbluetoothdisconnect 0x7f040021
 int id btncostomer 0x7f04002b
 int id btndbsearch 0x7f040029
 int id btndbupdate 0x7f040028
