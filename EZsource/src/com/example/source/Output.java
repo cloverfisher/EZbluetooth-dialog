@@ -3,7 +3,7 @@ package com.example.source;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Output {
+public class Output implements Cloneable{
 	String user;
 	String shipdate;
 	String customerNumber;
@@ -23,7 +23,13 @@ public class Output {
 	String workOrder;
 
 	List<Cargo> cargoList = new ArrayList<Cargo>();
+	
+	public Object clone() throws CloneNotSupportedException
+	{
 
+				return super.clone();
+
+	}
 	public String getShipToState() {
 		return shipToState;
 	}

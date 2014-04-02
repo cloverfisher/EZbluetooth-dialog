@@ -72,35 +72,40 @@ public class StringToXls {
 	    cv.setAutosize(true);
 
 	    // Write a few headers
-	    addCaption(sheet, 0, 0, "Customer #");
-	    addCaption(sheet, 1, 0, "ShiptoCostCode");
-	    addCaption(sheet, 2, 0, "Branch");
-	    addCaption(sheet, 3, 0, "Disc");
-	    addCaption(sheet, 4, 0, "Disc Days");
-	    addCaption(sheet, 5, 0, "Net Days");
-	    addCaption(sheet, 6, 0, "ShiptoNumber");
-	    addCaption(sheet, 7,0,"ShiptoName");
-	    addCaption(sheet, 8, 0, "ShiptoAddress");
-	    addCaption(sheet, 9, 0, "Blank");
-	    addCaption(sheet, 10, 0, "ShipToCity");
-	    addCaption(sheet, 11, 0, "ShipToState");
-	    addCaption(sheet, 12, 0, "ShipToZip");
-	    addCaption(sheet, 13, 0, "Blank");
-	    addCaption(sheet, 14, 0, "OrderTotal");
-	    addCaption(sheet, 15, 0, "Warehouse");
-	    addCaption(sheet, 16, 0, "WorkOrder");
+	    addCaption(sheet, 0, 0, "Line ");
+	    addCaption(sheet, 1, 0, "User ");
+	    addCaption(sheet, 2, 0, "Shipdate ");
+
+	    addCaption(sheet, 3, 0, "Customer #");
+	    addCaption(sheet, 4, 0, "ShiptoCostCode");
+	    addCaption(sheet, 5, 0, "Branch");
+	    addCaption(sheet, 6, 0, "Disc");
+	    addCaption(sheet, 7, 0, "Disc Days");
+	    addCaption(sheet, 8, 0, "Net Days");
+	    addCaption(sheet, 9, 0, "ShiptoNumber");
+	    addCaption(sheet, 10,0,"ShiptoName");
+	    addCaption(sheet, 11, 0, "ShiptoAddress");
+	    addCaption(sheet, 12, 0, "Blank");
+	    addCaption(sheet, 13, 0, "ShipToCity");
+	    addCaption(sheet, 14, 0, "ShipToState");
+	    addCaption(sheet, 15, 0, "ShipToZip");
+	    addCaption(sheet, 16, 0, "Blank");
+	    addCaption(sheet, 17, 0, "OrderTotal");
+	    addCaption(sheet, 18, 0, "Warehouse");
+	    addCaption(sheet, 19, 0, "WorkOrder");
 	    
 	    addCaption(sheet, 0, 1, "A");
 	    addCaption(sheet, 1, 1, "Line #");
-	    addCaption(sheet, 2, 1, "city");
-	    addCaption(sheet, 3, 1, "price");
-	    addCaption(sheet, 4, 1, "custpart");
-	    addCaption(sheet, 5, 1, "item");
-	    addCaption(sheet, 6, 1, "description");
-	    addCaption(sheet, 7, 1, "enter date");
-	    addCaption(sheet, 8, 1, "enter time");
-	    addCaption(sheet, 9, 1, "on order");
-	    addCaption(sheet, 10, 1, "Blank");
+	    addCaption(sheet, 2, 1, "QTY");
+	    addCaption(sheet, 3, 1, "UOM");
+	    addCaption(sheet, 4, 1, "price");
+	    addCaption(sheet, 5, 1, "custpart");
+	    addCaption(sheet, 6, 1, "item");
+	    addCaption(sheet, 7, 1, "description");
+	    addCaption(sheet, 8, 1, "enter date");
+	    addCaption(sheet, 9, 1, "enter time");
+	    addCaption(sheet, 10, 1, "on order");
+	    addCaption(sheet, 11, 1, "Blank");
 	    addCaption(sheet, 11, 1, "Blank");
 	    addCaption(sheet, 12, 1, "Blank");
 	    addCaption(sheet, 13, 1, "Blank");
@@ -114,6 +119,8 @@ public class StringToXls {
 	    // Write a few number
 		  int i=0,j=2;
 		  addLabel(sheet, i, j, "H");
+		  i++;
+		  addLabel(sheet, i, j, "1");
 		  i++;		  
 		  addLabel(sheet, i, j, output.getUser());
 		  i++;
@@ -238,10 +245,8 @@ public class StringToXls {
 	    try {
 			test.write(output);
 		} catch (WriteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    return nameString;

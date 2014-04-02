@@ -77,6 +77,7 @@ int qtn = 0;
 	final int CHOOSECUSTOMER = 3;
 	final int CHOOSERETURNABLE =4;
 	final int COSTCODE = 5;
+	static final int STATE_FINAL = 255;
 //	final int CHOOSESHIPTONUMBER = ;
 	AlertDialog.Builder ad;
 	DatePickerDialog dialog;
@@ -92,6 +93,8 @@ int qtn = 0;
 	String stateshiptocity = null;
 	String stateshiptozip = null;
 	
+	int stateplus = 0;
+	
 	ListView list;
 	
 //	String statetime = null;
@@ -100,7 +103,6 @@ int qtn = 0;
 	
 	
 	int bluetoothdevice;
-
 	  static final int REQUEST_ACCOUNT_PICKER = 1;
 	  static final int REQUEST_AUTHORIZATION = 2;
 	  static final int CAPTURE_IMAGE = 3;
@@ -108,6 +110,7 @@ int qtn = 0;
 	Semaphore semp = new Semaphore(0);
 	
 	Output output = new Output();
+	
 	//Cargo cargo = new Cargo();
 	List<Cargo> cargolist = new ArrayList();
 	Calendar calendar = Calendar.getInstance();  
@@ -115,6 +118,8 @@ int qtn = 0;
 	SharedPreferences costomercode;
 	String costomercodeString;
 	ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+	
+
 	
 	public boolean costomerCodeOn()
 	{
@@ -179,39 +184,18 @@ int qtn = 0;
 		     //   	tempstring = msg.obj.toString();
 		        	ins.scanitemplus(tempstring);
 		        	break;
-		        }        	
+		        }  
+		        case STATE_FINAL:
+		        {
+		        	ins.uploadbyBluetoothplus(tempstring);
+		        }
 	        	}
 	     //   	tempstring = msg.obj.toString();
 	        //	enteruseridplus(tempstring);
 	        	Log.e("ysy","lalalala" + tempstring);
 	        	break;
 	        }
-//	        case 2:
-//	        {
-//	        	Log.e("ysy", "enterpin");
-//	        //	tempstring = msg.obj.toString();
-//	        	enteruserpinplus(tempstring);
-//
-//	        	break;
-//	        }
-//	        case 4:
-//	        {
-//	       // 	tempstring = msg.obj.toString();
-//	        	entershiptoplus(tempstring);
-//	        	break;
-//	        }
-//	        case 5:
-//	        {
-//	         //	tempstring = msg.obj.toString();
-//	        	workordernumberplus(tempstring);
-//	        	break;
-//	        }
-//	        case 6:
-//	        {
-//	     //   	tempstring = msg.obj.toString();
-//	        	scanitemplus(tempstring);
-//	        	break;
-//	        }
+
 	      }
 		    super.handleMessage(msg); 
 	    }
@@ -242,14 +226,17 @@ int qtn = 0;
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0,
 					View arg1, int position, long arg3) {
-			
+			if(position != 0)
+			{
 				output.getCargoList().remove(position-1);
 				output.setCargoList(cargolist);
 				output.setOrderTotal(cargolist.size());
 				output.setShipdate(stateshipdate);
 				Log.e("ysy", "listview" + " " + position + " " + arg3);
 				mylist.remove(position);
-				mSchedule.notifyDataSetChanged();
+				mSchedule.notifyDataSetChanged();				
+			}
+
 				return false;
 			}
 		});
@@ -266,47 +253,7 @@ int qtn = 0;
 
 	
 	}
-	/*
-	  private void saveFileToDrive() {
-		    Thread t = new Thread(new Runnable() {
-		      @Override
-		      public void run() {
-		        try {
-		          // File's binary content
-		        	Drive service =AccountActivity.service;
-		          
-		          File body = new File();
-		          body.setTitle("um");
-		          body.setDescription("A test document");
-		          body.setMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-		          
-		          String path = Environment.getExternalStorageDirectory().getPath();
-			//	  File file = new File(path + "/Ezsource/UserMaster");
-		          java.io.File fileContent1 = new java.io.File(path + "/Ezsource/UserMaster/UserMaster.xls");
-		          FileContent mediaContent = new FileContent("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileContent1);
 
-		          File file = service.files().insert(body, mediaContent).execute();
-		          if (file != null) {
-		            showToast("Photo uploaded: " + file.getTitle());
-		            Log.e("ysy", "uploaded");
-		 //           startCameraIntent();
-		          }
-		          else {
-		        	  showToast("Photo not uploaded: ");
-		        	  Log.e("ysy", "notuploaded");
-				}
-		        } catch (UserRecoverableAuthIOException e) {
-		        	Log.e("ysy", "UserRecoverableAuthIOException");
-		        	e.printStackTrace();
-		          startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
-		        } catch (IOException e) {
-		          e.printStackTrace();
-		        }
-		      }
-		    });
-		    t.start();
-		  }
-		  */
 	  public void showToast(final String toast) {
 		    runOnUiThread(new Runnable() {
 		      @Override
@@ -324,146 +271,7 @@ int qtn = 0;
 		return true;
 	}
 
-	/*
-	
-	public String bluetoothGetMessage(){
-		String tempStr = null;
-		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		if(mBluetoothAdapter == null){
-			new AlertDialog.Builder(TransactionActivity.this).setTitle("Alert")
-			.setMessage("no bluetooth").show();
-		}
-		return tempStr;
-	}
 
-	private class ConnectThread extends Thread {
-	    private final BluetoothSocket mmSocket;
-	    private final BluetoothDevice mmDevice;
-
-	    public ConnectThread(BluetoothDevice device) {
-	        // Use a temporary object that is later assigned to mmSocket,
-	        // because mmSocket is final
-	        BluetoothSocket tmp = null;
-	        mmDevice = device;
-
-	        // Get a BluetoothSocket to connect with the given BluetoothDevice
-	        try {
-	            // MY_UUID is the app's UUID string, also used by the server code
-	       //     tmp = device.createRfcommSocketToServiceRecord(uuid);
-	            
-	            Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
-	            tmp = (BluetoothSocket) m.invoke(device, 1);
-	            
-	        } catch (Exception e) { 
-	        	Log.e("ysy", e.toString());
-	        }
-	        mmSocket = tmp;
-	    }
-	    
-
-	    public void run() {
-	        // Cancel discovery because it will slow down the connection
-	        mBluetoothAdapter.cancelDiscovery();
-
-	        try {
-	            // Connect the device through the socket. This will block
-	            // until it succeeds or throws an exception
-	            mmSocket.connect();
-	            semp.release();
-	        } catch (IOException connectException) {
-	            // Unable to connect; close the socket and get out
-
-	        	System.exit(0);
-//	            try {
-//	                mmSocket.close();
-//	                return;
-//	            } 
-//	            catch (IOException closeException) { 
-//	            	closeException.printStackTrace();
-//	            }
-//	        
-//		            return;          	
-	            
-
-	        }
-
-	        // Do work to manage the connection (in a separate thread)
-	//        manageConnectedSocket(mmSocket);
-	    }
-
-	    //  Will cancel an in-progress connection, and close the socket 
-	    public void cancel() {
-	        try {
-	            mmSocket.close();
-	        } catch (IOException e) { }
-	    }
-	}
-	
-//data transmit
-	private class ConnectedThread extends Thread {
-	    private final BluetoothSocket mmSocket;
-	    private final InputStream mmInStream;
-	    private final OutputStream mmOutStream;
-	    private Handler mmhandler;
-
-	    public ConnectedThread(BluetoothSocket socket,Handler mhandler) {
-	        mmSocket = socket;
-	        mmhandler = mhandler;
-	        InputStream tmpIn = null;
-	        OutputStream tmpOut = null;
-
-	      
-	        // Get the input and output streams, using temp objects because
-	        // member streams are final
-	        try {
-	            tmpIn = socket.getInputStream();
-	            tmpOut = socket.getOutputStream();
-	        } catch (IOException e) { }
-
-	        mmInStream = tmpIn;
-	        mmOutStream = tmpOut;
-	    }
-
-	    public void run() {
-	    	 // lock.notify();
-	        byte[] buffer = new byte[1024];  // buffer store for the stream
-	        int bytes; // bytes returned from read()
-	        Log.e("ysy", "connected thread");
-	        // Keep listening to the InputStream until an exception occurs
-	        while (true) {
-	            try {
-	                // Read from the InputStream
-	                bytes = mmInStream.read(buffer);
-	                String data = new String(buffer, 0, bytes);
-	                Log.e("ysy", data);
-
-	                // Send the obtained bytes to the UI activity
-//	                mmhandler.obtainMessage(TransactionActivity.DATA_RECEIVE,data)
-//	                        .sendToTarget();
-	                mmhandler.obtainMessage(state, data).sendToTarget();
-	            } catch (IOException e) {
-	            	Log.e("ysy", e.getMessage());
-	                break;
-	            }
-	        }
-	    }
-
-	    //  Call this from the main activity to send data to the remote device 
-	    public void write(byte[] bytes) {
-	        try {
-	            mmOutStream.write(bytes);
-	        } catch (IOException e) { }
-	    }
-
-	    //  Call this from the main activity to shutdown the connection 
-	    public void cancel() {
-	        try {
-	            mmSocket.close();
-	        } catch (IOException e) { }
-	    }
-	}
-	
-	*/
 	private class UserMasterDB
 	{
 		SQLiteDatabase db;
@@ -642,6 +450,23 @@ int qtn = 0;
 	public void enteruserid()
 	{
 		state = 1;
+		//initial
+		if(stateplus == 1)
+		{
+			Log.e("ysy", "stateplus=1");
+			
+
+			for(int i = output.getOrderTotal();i>=1;i--)
+			{
+				mylist.remove(i);
+			}
+			output=new Output();
+//			mylist.remove(index)
+//			mylist.removeAll(cargolist);
+			mSchedule.notifyDataSetChanged();
+
+		}
+		stateplus = 1;
 		LayoutInflater li = LayoutInflater.from(this);
 		View promptsView = li.inflate(R.layout.simpledialoglayout, null);
   	  	final EditText et   = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);
@@ -1083,10 +908,37 @@ int qtn = 0;
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				adialog.cancel();
+				uploadbyBluetooth();
 			}
 		}).show();
+	}
+	
+	void uploadbyBluetooth()
+	{
+		state = 	STATE_FINAL;
+	}
+	
+	void uploadbyBluetoothplus(String astring)
+	{
+		if(astring.equals("~DONE"))
+		{
+			sendemail(output);
+			finish();
+		}
+		else if (astring.equals("~DELETE")) {
+			// TODO Auto-generated method stub
+
+			mSchedule.notifyDataSetChanged();
+			finish();
+		}
+		else if(astring.equals("~NEXT-ORDER")){
+
+			sendemail(output);
+			ins.enteruserid();		
+		}
+		
+		
 	}
 	
 	public void deleteitem()
@@ -1273,12 +1125,7 @@ int qtn = 0;
 				cargo.setOnOrder("N");
 				cargolist.add(cargo);
 				mSchedule.notifyDataSetChanged();
-//				
-//				SimpleAdapter mSchedule = new SimpleAdapter(this, mylist,
-//						R.layout.mylistview,
-//						new String[]{"date","qty","description"},
-//						new int[]{R.id.listdate,R.id.listqty,R.id.listdescroption});
-//				list.setAdapter(mSchedule);
+
 				scanitem();					
 			}
 		});//.setNegativeButton("", listener)
@@ -1318,16 +1165,9 @@ int qtn = 0;
 			e.printStackTrace();
 		}
 		
-		try{
-			GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
-	//		GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
-			sender.sendMail("bla", "bla", "yuysyu@gmail.com", "yuysyu@gmail.com",name);
-		}
-		catch(Exception e)
-		{
-			Log.e("SendMail", e.getMessage());
-		}
-	//	String name = stx.getOneSheet(output);
+		SendEmailThread seThread = new SendEmailThread();
+		seThread.setname(name);
+		seThread.start();
 //		try{
 //			GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
 //	//		GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
@@ -1337,123 +1177,39 @@ int qtn = 0;
 //		{
 //			Log.e("SendMail", e.getMessage());
 //		}
+
 	}
 	
-//	public void showdialog(int astate)
-//	{
-//		/*
-//		 * AlertDialog*/
-//		LayoutInflater li = LayoutInflater.from(this);
-//		View promptsView = li.inflate(R.layout.simpledialoglayout, null);
-//  	  	final EditText et   = (EditText)promptsView.findViewById(R.id.editTextDialogUserInput);
-//		switch(state)
-//		{
-//		case ENTERUSERID:// enter UserID
-//		{
-//			ad.setTitle("enter UserID").setView(promptsView);
-//			ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-//		           public void onClick(DialogInterface dialog, int id) {
-//		               // User clicked OK button
-//		        	   tempstring = et.getText().toString();
-//	        		   dialog.dismiss();
-//		        	   Log.e("ysy", tempstring);
-//		 //       	   this.state = ENTERPIN;
-//		        	   if(checkUserID(tempstring))
-//		        	   {
-//		        		   state = ENTERPIN;
-//		        		   stateuserid = tempstring;
-//		        		   showdialog(ENTERPIN);
-//		        		 //  state = ENTERPIN;
-//		        	   }
-//		        	   else {
-//		        		   Log.e("ysy","wrong UserID");
-//		        		   showdialog(ENTERUSERID);
-//		        	   }
-//		           }
-//		       }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-//				
-//				@Override
-//				public void onClick(DialogInterface dialog, int which) {
-//					// 
-//					//User clicked cancel button
-//					
-//				}
-//			}).show();
-//			break;
-//		}
-//		case ENTERPIN:// enter UserID
-//		{
-//			ad.setTitle("enter PIN").setView(promptsView);
-//			ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-//		           public void onClick(DialogInterface dialog, int id) {
-//		               // User clicked OK button
-//		        	   tempstring = et.getText().toString();
-//		        	   Log.e("ysy", tempstring);
-//		        	   if(checkPin(tempstring))
-//		        	   {
-//		        		   state = CHOOSECUSTOMER;
-//		        		   UserMasterDB umdb = new UserMasterDB();
-//		        		   umdb.openDB();
-//		        		ArrayList<UserMaster> aList= umdb.customerNameList(stateuserid);
-//		        		   umdb.closeDB();
-//		        		   showlistdialog(state,aList);
-//		        	   }
-//		        	   else
-//		        	   {
-//		        		   state = ENTERUSERID;
-//		        		   
-//		        		   showdialog(ENTERUSERID);
-//		        	   }
-//		 //       	   this.state = ENTERPIN;
-//		  //      	   showdialog(ENTERPIN);
-//		           }
-//		       }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-//				
-//				@Override
-//				public void onClick(DialogInterface dialog, int which) {
-//					// 
-//					//User clicked cancel button
-//					
-//				}
-//			}).show();
-//			break;
-//		}
-//		case CHOOSERETURNABLE:
-//		{
-//			state = COSTCODE;
-//			
-//			LayoutInflater li2 = LayoutInflater.from(this);
-//			View promptsView2 = li2.inflate(R.layout.simpledialoglayout, null);
-//	  	  	final EditText et2   = (EditText)promptsView2.findViewById(R.id.editTextDialogUserInput);
-//	  	  	et2.setKeyListener(new DigitsKeyListener(false, true));
-//			
-//			
-//			ad.setTitle("Scan/Enter Shipto or Cost code").setView(promptsView);
-//			ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-//				
-//				@Override
-//				public void onClick(DialogInterface dialog, int which) {
-//					// 
-//					//use the database to confirm the shipto number
-//					String tempString = et2.getText().toString();
-//					if(checkShiptoNum(tempString))
-//					{
-//		//				checkautocrib;
-//					}
-//					else
-//					{
-//	//					Toast.makeText(this, " is not exist in database", Toast.LENGTH_LONG).show();
-//					}
-//				}
-//			}).show();
-//			break;
-//		}
-////		case CHOOSESHIPTONUMBER:
-//		}	
-//	//	ad.setTitle(title)
-//
-//	}
-//	
+	private class SendEmailThread extends Thread{
+
+		String name;
+		public void setname(String aname)
+		{
+			this.name = aname;
+		}
+		@Override
+		public void run() {
+			try {
+				Output outputplus = (Output) output.clone();
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try{
+				GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
+		//		GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
+				sender.sendMail("bla", "bla", "yuysyu@gmail.com", "yuysyu@gmail.com",name);
+			}
+			catch(Exception e)
+			{
+				Log.e("SendMail", e.getMessage());
+			}
+			super.run();
+		}
+		
+	}
+	
+
 	public void showTimeDialog()
 	{
 		
@@ -1495,105 +1251,7 @@ int qtn = 0;
 		dialog.show();
 	}
 	
-//
-//	
-//	public void showTwoButtonDialog(String title)
-//	{
-//		switch (state) {
-//		case CHOOSECUSTOMER:
-//		{
-//			state = CHOOSERETURNABLE;
-//			if(statereturnable == "Y")
-//			{
-//				//whether it can be returned?
-//				
-//				//showTwoButtonDialog("Returnable transaction?");
-//				showdialog(state);
-//			}
-//			else if (statereturnable == "N") {
-//				//
-//				
-//			}
-//			new AlertDialog.Builder(this).setTitle(title).setPositiveButton("yes", new DialogInterface.OnClickListener() {
-//				
-//				@Override
-//				public void onClick(DialogInterface dialog, int which) {
-//					
-//					statereturnable = "Y";
-//					showdialog(state);
-//				}
-//			}).setNegativeButton("No",new DialogInterface.OnClickListener()
-//					{
-//
-//						@Override
-//						public void onClick(DialogInterface dialog, int which) {
-//							// 
-//							statereturnable = "N";
-//						}
-//				
-//					}).show();
-//			break;
-//		}
-//		default:
-//			break;
-//		}
-//
-//	}
-//	
-//	public void showlistdialog(int state, ArrayList<UserMaster> alist)
-//	{
-//		final ArrayList<UserMaster> list = alist;
-//		final String[] st = new String[list.size()];
-//		switch (state) {
-//		case CHOOSECUSTOMER:
-//		{
-//			for(int i = 0 ; i < list.size(); i++)
-//			{
-//				st[i] = list.get(i).getCustName();
-//			}
-//			new AlertDialog.Builder(this).setTitle("Choose customerName").setItems(st,
-//					new DialogInterface.OnClickListener() {
-//						
-//						@Override
-//						public void onClick(DialogInterface dialog, int which) {
-//							// 
-//							Log.e("ysy",st[which]);
-//							
-//							//find the costomer in the  usermaster to see whether it is returnable customer master 
-//							UserMasterDB umdb = new UserMasterDB();
-//							umdb.openDB();
-//							statecustomer = list.get(which).getCustomer();
-//							statereturnable = umdb.returnDBString("usermaster", "UserID", stateuserid, "Customer", list.get(which).getCustomer(), "Returnable");
-//							Log.e("ysy", "returnable " + statereturnable);
-//							if(statereturnable == "Y")
-//							{
-//								//whether it can be returned?
-//								
-//								showTwoButtonDialog("Returnable transaction?");
-//							}
-//							else if (statereturnable == "N") {
-//								//
-//								
-//							}
-////							showTwoButtonDialog("Returnable transaction?");
-//							umdb.closeDB();
-//							
-//						}
-//					}
-//					).show();
-//			break;
-//		}
-//		default:
-//			break;
-//		}
-//		
-//		{
-//			UserMasterDB umdb = new UserMasterDB();
-//			umdb.openDB();
-//	//		String stateAutoCrib = umdb.returnDBString("customermaster", "Customer", statecustomer, "", row2, returncolumn)
-//		}
-//
-//	}
+
 
 	void insertOutputDBPlus(Output output)
 	{
@@ -1672,155 +1330,6 @@ int qtn = 0;
 		umdb.closeDB();
 		return tpstate;
 	}
-	
-
-	/*
-	public void bluetooth()
-	{
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
-		intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-		intentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-		//this cannot be use in 2.3.3
-		intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
-//		registerReceiver(search, filter)
-		uuid = UUID.randomUUID();
-		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		if(mBluetoothAdapter == null)
-		{
-			//this will change to an alert dialog
-			Log.e("ysy", "this service do not support bluetooth");
-		}
-		
-		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-		if(pairedDevices.size()<=0)
-		{
-			showToast("can not find bluetooth device,please open the bluetooth");
-			return;
-		}
-		final String[] st = new String[pairedDevices.size()];
-		if(pairedDevices.size() > 0)
-		{
-			
-			
-			
-			int i=0;
-			for(BluetoothDevice device : pairedDevices)
-			{
-				st[i] = device.getName();
-			}
-		}
-
-
-		   // Create a BroadcastReceiver for ACTION_FOUND
-		final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-		    public void onReceive(Context context, Intent intent) {
-		        String action = intent.getAction();
-		        // When discovery finds a device
-		        if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-		            // Get the BluetoothDevice object from the Intent
-		            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-		            // Add the name and address to an array adapter to show in a ListView
-		       //     mArrayAdapter.add(device.getName() + "n" + device.getAddress());
-		        }
-		    }
-		};
-		
-		// Register the BroadcastReceiver
-		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-		registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-	
-		
-		
-		
-
-
-		bluetoothGetMessage();
-		ConnectThread clientThread = null;
-		if(pairedDevices.size() > 0)
-		{
-			int i=0;
-			for(BluetoothDevice device : pairedDevices)
-			{
-				Log.e("ysy", "for loop");
-				if(i==bluetoothdevice)
-				{
-					clientThread = new ConnectThread(device);
-					break;
-				}
-			}
-//			for(int i = 0; i< pairedDevices.size();i++)
-//			{
-//				clientThread = new ConnectThread(pairedDevices.)
-//			}
-		}
-		clientThread.start();
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-//		try {
-//			//semp.acquire();
-//			
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		
-
-		Handler handler = new Handler()
-		{
-			
-		    public void handleMessage(Message msg) {
-		    	Log.e("ysy", "msg"+ msg.what);
-	        	tempstring = msg.obj.toString();
-	        	tempstring = tempstring.trim();
-		        switch (msg.what) {
-		        case 1: //state 1
-		        {
-		     //   	tempstring = msg.obj.toString();
-		        	enteruseridplus(tempstring);
-		        	break;
-		        }
-		        case 2:
-		        {
-		        	Log.e("ysy", "enterpin");
-		        //	tempstring = msg.obj.toString();
-		        	enteruserpinplus(tempstring);
-
-		        	break;
-		        }
-		        case 4:
-		        {
-		       // 	tempstring = msg.obj.toString();
-		        	entershiptoplus(tempstring);
-		        	break;
-		        }
-		        case 5:
-		        {
-		         //	tempstring = msg.obj.toString();
-		        	workordernumberplus(tempstring);
-		        	break;
-		        }
-		        case 6:
-		        {
-		     //   	tempstring = msg.obj.toString();
-		        	scanitemplus(tempstring);
-		        	break;
-		        }
-		      }
-			    super.handleMessage(msg); 
-		    }
-		};
-		ConnectedThread connectedThread = new ConnectedThread(clientThread.mmSocket,handler);
-		connectedThread.start();	
-
-	}
-
-*/
 
 }
 
