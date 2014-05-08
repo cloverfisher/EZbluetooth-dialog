@@ -140,9 +140,13 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, AccountActivity.class);
-				startActivity(intent);
+				//TODO 这里先把newOutputDB 方法放在这，到时候转到别的地方
+				newDb.openDB();
+				newDb.newOutputDB();
+				newDb.closeDB();
+//				Intent intent = new Intent();
+//				intent.setClass(MainActivity.this, AccountActivity.class);
+//				startActivity(intent);
 				
 			}
 		});
@@ -598,6 +602,7 @@ public class MainActivity extends Activity {
 			Log.e("ysy", "add new db");
 			newDb.openDB();
 			newDb.buildDB();
+
 			 XlsToString xts = new XlsToString();
 			 try {
 				umlist =  xts.catchUsermaster();

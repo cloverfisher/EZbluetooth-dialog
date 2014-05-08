@@ -92,7 +92,7 @@ int qtn = 0;
 	String stateshiptostate = null;
 	String stateshiptocity = null;
 	String stateshiptozip = null;
-	
+	String statePrice = null;
 	int stateplus = 0;
 	
 	ListView list;
@@ -201,6 +201,8 @@ int qtn = 0;
 	    }
 	};
 	SimpleAdapter mSchedule;
+	
+	
 
 
 	@Override
@@ -304,47 +306,47 @@ int qtn = 0;
 					
 		}
 		
-		public ArrayList<String> OutputHistory()
-		{
-			ArrayList<String> list = new ArrayList<String>();
-		//	db.qu
-			Cursor c = db.query("outputmaster", null,null, null, null, null, null);
-	//c.getCount()
-			if(!c.moveToFirst())
-				return list;
-			UserMaster um = new UserMaster();
-//			um.setCustName(c.getString(c.getColumnIndex("CustName")));
-//			um.setCustomer(c.getString(c.getColumnIndex("Customer")));
-			StringBuffer sb = new StringBuffer();
-			sb.append("Customer:" + c.getString(c.getColumnIndex("Customer")) +";");
-			sb.append("costCode:" + c.getString(c.getColumnIndex("costCode")) +";");
-			sb.append("ShiptoNumber:" + c.getString(c.getColumnIndex("ShiptoNumber")) +";");
-			sb.append("ShiptoAddress:" + c.getString(c.getColumnIndex("ShiptoAddress")) +";");
-			sb.append("ShiptoCity:" + c.getString(c.getColumnIndex("ShiptoCity")) +";");
-			sb.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
-			sb.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
-			sb.append("ShiptoZip:" + c.getString(c.getColumnIndex("ShiptoZip")) +";");
-			sb.append("OrderTotal:" + c.getString(c.getColumnIndex("OrderTotal")) +";");
-			sb.append("Warehouse:" + c.getString(c.getColumnIndex("Warehouse")) +";");
-			sb.append("WorkOrder:" + c.getString(c.getColumnIndex("WorkOrder")) +";");
-			sb.append("Price:" + c.getString(c.getColumnIndex("Price")) +";");
-			sb.append("Item:" + c.getString(c.getColumnIndex("Item")) +";");
-			sb.append("Description:" + c.getString(c.getColumnIndex("Description")) +";");
-			sb.append("EnterDate:" + c.getString(c.getColumnIndex("EnterDate")) +";");
-			sb.append("EnterTime:" + c.getString(c.getColumnIndex("EnterTime")) +";");
-			sb.append("OnOrder:" + c.getString(c.getColumnIndex("OnOrder")) +";");
-
-			list.add(sb.toString());		
-//			while(c.moveToNext())
-//			{
-//				um = new UserMaster();
-//				um.setCustName(c.getString(c.getColumnIndex("CustName")));
-//				um.setCustomer(c.getString(c.getColumnIndex("Customer")));
-//				list.add(um);		
-//			}
-			return list;
-			
-		}
+//		public ArrayList<String> OutputHistory()
+//		{
+//			ArrayList<String> list = new ArrayList<String>();
+//		//	db.qu
+//			Cursor c = db.query("outputmaster", null,null, null, null, null, null);
+//	//c.getCount()
+//			if(!c.moveToFirst())
+//				return list;
+//			UserMaster um = new UserMaster();
+////			um.setCustName(c.getString(c.getColumnIndex("CustName")));
+////			um.setCustomer(c.getString(c.getColumnIndex("Customer")));
+//			StringBuffer sb = new StringBuffer();
+//			sb.append("Customer:" + c.getString(c.getColumnIndex("Customer")) +";");
+//			sb.append("costCode:" + c.getString(c.getColumnIndex("costCode")) +";");
+//			sb.append("ShiptoNumber:" + c.getString(c.getColumnIndex("ShiptoNumber")) +";");
+//			sb.append("ShiptoAddress:" + c.getString(c.getColumnIndex("ShiptoAddress")) +";");
+//			sb.append("ShiptoCity:" + c.getString(c.getColumnIndex("ShiptoCity")) +";");
+//			sb.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
+//			sb.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
+//			sb.append("ShiptoZip:" + c.getString(c.getColumnIndex("ShiptoZip")) +";");
+//			sb.append("OrderTotal:" + c.getString(c.getColumnIndex("OrderTotal")) +";");
+//			sb.append("Warehouse:" + c.getString(c.getColumnIndex("Warehouse")) +";");
+//			sb.append("WorkOrder:" + c.getString(c.getColumnIndex("WorkOrder")) +";");
+//			sb.append("Price:" + c.getString(c.getColumnIndex("Price")) +";");
+//			sb.append("Item:" + c.getString(c.getColumnIndex("Item")) +";");
+//			sb.append("Description:" + c.getString(c.getColumnIndex("Description")) +";");
+//			sb.append("EnterDate:" + c.getString(c.getColumnIndex("EnterDate")) +";");
+//			sb.append("EnterTime:" + c.getString(c.getColumnIndex("EnterTime")) +";");
+//			sb.append("OnOrder:" + c.getString(c.getColumnIndex("OnOrder")) +";");
+//
+//			list.add(sb.toString());		
+////			while(c.moveToNext())
+////			{
+////				um = new UserMaster();
+////				um.setCustName(c.getString(c.getColumnIndex("CustName")));
+////				um.setCustomer(c.getString(c.getColumnIndex("Customer")));
+////				list.add(um);		
+////			}
+//			return list;
+//			
+//		}
 		
 		
 		public UserMasterDB()
@@ -381,7 +383,7 @@ int qtn = 0;
 			Log.e("ysy", "tablename:" + tablename + "column " + column + "row" + row + "column2 "+ column2 + "row2 " + row2);
 			Cursor c = db.query(tablename, null, column + " = ? AND "+ column2 + " = ?", new String[]{row,row2}, null, null, null);
 		//	Cursor c = db.query(tablename, null, column + " = ?", new String[]{row}, null, null, null);
-
+			Log.e("ysy", returncolumn);
 			if(c.moveToFirst())
 				returnString = c.getString(c.getColumnIndex(returncolumn));
 			return returnString;
@@ -444,6 +446,14 @@ int qtn = 0;
 	}
 	
 
+	boolean whetherEmpty(String string)
+	{
+		if(string == null)
+			return true;
+		if(string.trim().equals(""))
+			return true;
+		return false;
+	}
 	
 	//state = 1
 	AlertDialog adialog;
@@ -476,7 +486,12 @@ int qtn = 0;
 		           public void onClick(DialogInterface dialog, int id) {
 		               // User clicked OK button
 		        	   tempstring = et.getText().toString();
-		        	   
+		        	   if(whetherEmpty(tempstring))
+		        	   {
+		        		   showToast("empty userID");
+		        		   ins.enteruserid();
+		        		   return;
+		        	   }
 		        	   adialog.cancel();
 		        	   Log.e("ysy", tempstring);
 		 //       	   this.state = ENTERPIN;
@@ -487,11 +502,14 @@ int qtn = 0;
 		        		   output.setUser(tempstring);
 		       // 		   testdialog();
 		        		   ins.enteruserpin();
+		        		   return;
 		        		   //  state = ENTERPIN;
 		        	   }
 		        	   else {
+		        		   showToast("wrong UserID");
 		        		   Log.e("ysy","wrong UserID");
 		        		   ins.enteruserid();
+		        		   return;
 		        	   }
 		           }
 		       }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -499,9 +517,7 @@ int qtn = 0;
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					adialog.cancel();
-					// TODO Auto-generated method stub
-					//User clicked cancel button
-					
+					finish();
 				}
 			}).show();
 
@@ -514,11 +530,20 @@ int qtn = 0;
  	   {
  	//	   state = ENTERPIN;
  		   stateuserid = tempstring;
+ 		   if(whetherEmpty(tempstring))
+ 		   {
+ 			   showToast("The user Id is empty");
+ 			   enteruserid();
+ 			   return;
+ 		   }
  		   output.setUser(tempstring);
+ 		   
  		   enteruserpin();
+ 		   return;
  		   //  state = ENTERPIN;
  	   }
  	   else {
+ 		  showToast("wrong UserID");
  		   Log.e("ysy","wrong UserID");
  		   enteruserid();
  	   }		
@@ -539,6 +564,12 @@ int qtn = 0;
 	               // User clicked OK button
 	        	   adialog.cancel();
 	        	   tempstring = et.getText().toString();
+	        	   if(whetherEmpty(tempstring))
+	        	   {
+	        		   showToast("The user Pin is empty");
+	        		   ins.enteruserpin();
+	        		   return;
+	        	   }
 	        	   Log.e("ysy", tempstring);
 	        	   if(checkPin(tempstring))
 	        	   {
@@ -548,13 +579,14 @@ int qtn = 0;
 	        		ArrayList<UserMaster> aList= umdb.customerNameList(stateuserid);
 	        		   umdb.closeDB();
 	        	//	   showlistdialog(state,aList);
-	        		   choosecustomer(aList);
+	        		   ins.choosecustomer(aList);
+	        		   return;
 	        	   }
 	        	   else
 	        	   {
-	        		   enteruserid();
-	//        		   state = ENTERUSERID;	        		   
-//	        		   showdialog(ENTERUSERID);
+	        		   ins.enteruserid();
+	        		   showToast("wrong Userpin");
+	        		   return;
 	        	   }
 	           }
 	       }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -562,8 +594,8 @@ int qtn = 0;
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				adialog.cancel();
-				// TODO Auto-generated method stub
-				//User clicked cancel button			
+				ins.enteruserid();
+				return;
 			}
 		}).show();
 	}
@@ -579,15 +611,14 @@ int qtn = 0;
  		   umdb.openDB();
  		ArrayList<UserMaster> aList= umdb.customerNameList(stateuserid);
  		   umdb.closeDB();
- 	//	   showlistdialog(state,aList);
- 		   choosecustomer(aList);
- 		
+ 		   ins.choosecustomer(aList);
+ 		   return;
  	   }
  	   else
  	   {
- 		   enteruserid();
-// 		   state = ENTERUSERID;	        		   
-// 		   showdialog(ENTERUSERID);
+ 		   ins.enteruserid();
+ 		  showToast("wrong user pin");
+ 		  return;
  	   }	
 	}
 	
@@ -603,6 +634,11 @@ int qtn = 0;
 			{
 				st[i] = list.get(i).getCustName();
 			}
+		if(list.size() == 1)
+		{
+			Log.e("ysy", "only one costomer, so just default");
+			//TODO 
+		}
 			adialog = 	new AlertDialog.Builder(this).setTitle("Choose customerName").setItems(st,
 					new DialogInterface.OnClickListener() {
 						
@@ -618,6 +654,21 @@ int qtn = 0;
 							output.setCustomerNumber(statecustomer);
 							statereturnable = umdb.returnDBString("usermaster", "UserID", stateuserid, "Customer", list.get(which).getCustomer(), "Returnable");
 							Log.e("ysy", "returnable " + statereturnable);
+//							statePrice = umdb.returnDBString("usermaster", "UserID", stateuserid, "Customer", list.get(which).getCustomer(), "Price");
+//							
+//							Log.e("ysy", "price " + statePrice);
+//							
+//							
+//							if(statePrice.equals("Y"))
+//							{
+//								//TODO
+//								statecustomer = "BLANK";
+//							}
+//							else
+//							{
+//								
+//							}
+							
 //							if(statereturnable == "Y")
 //							{
 //								//whether it can be returned?
@@ -676,6 +727,32 @@ int qtn = 0;
 	
 	}
 	
+	//TODO need to think.
+	public void chooseCheckoutOrReturn()
+	{
+		Log.e("ysy", "choosecheckoutorreturn");
+		adialog = new AlertDialog.Builder(this).setTitle("Check out or return").setPositiveButton("CHECKING OUT", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				adialog.cancel();
+			}
+		}).setNegativeButton("RETURNING", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				adialog.cancel();
+				//TODO check the returnable database that whether it is out 
+				//if()
+				{
+					
+				}
+			}
+		}).show();
+	}
+	
 	// state 4
 	public void entershipto()
 	{
@@ -696,16 +773,19 @@ int qtn = 0;
 				String tempString = et.getText().toString();
 				Log.e("ysy","shiptonum" + tempString);
 				adialog.cancel();
-     		   
+     		   	if(whetherEmpty(tempString))
+     		   	{
+     		   		showToast("The shiptoNumber/costCode is empty ");
+     		   		entershipto();
+     		   		return;
+     		   	}
+     		   	
 				if(checkShiptoNum(tempString))
 				{
 					//TODO find the autocrib
 					stateshiptonumer = tempString;
 					output.setShipToNumber(stateshiptonumer);
 					getshipto();
-					
-					
-					
 					if(autocribflag().equals("Y"))
 					{
 						SimpleDateFormat sdf = new SimpleDateFormat("mmddyy");
@@ -731,7 +811,7 @@ int qtn = 0;
 				else
 				{
 					Toast.makeText(TransactionActivity.this, "shipto number is wrong!", Toast.LENGTH_LONG).show();
-					
+					entershipto();
 				}
 			}
 		}).show();
@@ -745,10 +825,7 @@ int qtn = 0;
 			//TODO find the autocrib
 			stateshiptonumer = tempString;
 			output.setShipToNumber(stateshiptonumer);
-			getshipto();
-			
-			
-			
+			getshipto();		
 			if(autocribflag().equals("Y"))
 			{
 				SimpleDateFormat sdf = new SimpleDateFormat("mmddyy");
@@ -758,16 +835,19 @@ int qtn = 0;
 					workordernumber();
 				else
 					scanitem();
-			//	showTimeDialog();
 			}
 			else 
 			{
 				showTimeDialog();
 				}
 		}
+		else {
+			showToast("shipto number is wrong!");
+			entershipto();
+		}
 	}
 	
-
+	
 
 	
 	public String autocribflag()
@@ -808,6 +888,12 @@ int qtn = 0;
 				// TODO add scanitem function get the string to somewhere
 				adialog.cancel();
 				String tempString = et.getText().toString();
+				if(whetherEmpty(tempString))
+				{
+					showToast("the workordernumber is empty");
+					ins.workordernumber();
+					return;
+				}
 				workordernumberplus(tempString);
 //				scanitem();
 			}
@@ -849,6 +935,8 @@ int qtn = 0;
 					//TODO display item information
 				}
 				else {
+					showToast("please input the correct item number");
+					scanitem();
 					//TODO please input the valid item number
 
 				}
@@ -871,6 +959,8 @@ int qtn = 0;
 				}
 				else {
 					//TODO please input the at least one item ;
+					showToast("please input the correct item number");
+					scanitem();
 				}
 			}
 		}).show();
@@ -889,6 +979,7 @@ int qtn = 0;
 		}
 		else {
 			//TODO please input the valid item number
+			scanitem();
 			Log.e("ysy", tempstring + " is a wrong item id");
 		}	
 	}
@@ -901,8 +992,10 @@ int qtn = 0;
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
+				insertOutputDBPlus(output);
 				sendemail(output);//just for test
-				adialog.cancel();		
+				finish();
+			//	adialog.cancel();		
 			}
 		}).setNegativeButton("Edit", new DialogInterface.OnClickListener() {
 			
@@ -923,6 +1016,7 @@ int qtn = 0;
 	{
 		if(astring.equals("~DONE"))
 		{
+			insertOutputDBPlus(output);	
 			sendemail(output);
 			finish();
 		}
@@ -933,7 +1027,7 @@ int qtn = 0;
 			finish();
 		}
 		else if(astring.equals("~NEXT-ORDER")){
-
+			insertOutputDBPlus(output);
 			sendemail(output);
 			ins.enteruserid();		
 		}
@@ -1115,9 +1209,10 @@ int qtn = 0;
 				cargo.setQty(tv.getText().toString());
 				cargo.setItem(stateitemid);
 				cargo.setDescription(title);
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				Log.e("ysy", sdf.format(new java.util.Date()));
 				cargo.setEnterdate(sdf.format(new java.util.Date()));
-				SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
+				SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
 				cargo.setEntertime(sdf2.format(new java.util.Date()));
 				cargo.setUOM( "EA");
 				cargo.setPrice("1");
@@ -1168,15 +1263,6 @@ int qtn = 0;
 		SendEmailThread seThread = new SendEmailThread();
 		seThread.setname(name);
 		seThread.start();
-//		try{
-//			GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
-//	//		GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
-//			sender.sendMail("bla", "bla", "yuysyu@gmail.com", "yuysyu@gmail.com",name);
-//		}
-//		catch(Exception e)
-//		{
-//			Log.e("SendMail", e.getMessage());
-//		}
 
 	}
 	
@@ -1261,17 +1347,17 @@ int qtn = 0;
 		umdb.closeDB();
 	}
 	
-	void OutputHistoryPlus()
-	{
-		UserMasterDB umdb = new UserMasterDB();
-		umdb.openDB();
-		List<String> list = umdb.OutputHistory();
-		for(int i=0;i<list.size();i++)
-		{
-			Log.e("ysy", list.get(i));
-		}
-		umdb.closeDB();
-	}
+//	void OutputHistoryPlus()
+//	{
+//		UserMasterDB umdb = new UserMasterDB();
+//		umdb.openDB();
+//		List<String> list = umdb.OutputHistory();
+//		for(int i=0;i<list.size();i++)
+//		{
+//			Log.e("ysy", list.get(i));
+//		}
+//		umdb.closeDB();
+//	}
 
 	boolean checkUserID(String id)
 	{

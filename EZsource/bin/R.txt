@@ -71,7 +71,7 @@ int drawable ic_plusone_small_off_client 0x7f02001a
 int drawable ic_plusone_standard_off_client 0x7f02001b
 int drawable ic_plusone_tall_off_client 0x7f02001c
 int id SearchButton 0x7f04001b
-int id action_settings 0x7f040047
+int id action_settings 0x7f040046
 int id alignBounds 0x7f040002
 int id alignMargins 0x7f040003
 int id bottom 0x7f040005
@@ -101,8 +101,7 @@ int id center_vertical 0x7f040008
 int id clip_horizontal 0x7f04000f
 int id clip_vertical 0x7f04000e
 int id costomercode 0x7f040018
-int id dialogtitle 0x7f040045
-int id editTextDialogUserInput 0x7f040046
+int id editTextDialogUserInput 0x7f040045
 int id editTextExchangeCode 0x7f040042
 int id editTextIdToken 0x7f040043
 int id editTextcostomercode 0x7f040022

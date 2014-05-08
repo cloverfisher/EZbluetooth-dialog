@@ -119,8 +119,6 @@ public class StringToXls {
 	    // Write a few number
 		  int i=0,j=2;
 		  addLabel(sheet, i, j, "H");
-		  i++;
-		  addLabel(sheet, i, j, "1");
 		  i++;		  
 		  addLabel(sheet, i, j, output.getUser());
 		  i++;
