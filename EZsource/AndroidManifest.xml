@@ -23,6 +23,7 @@
         </activity>
         <activity
             android:name="com.example.ezsource.TransactionActivity"
+            android:screenOrientation="landscape"  
             android:label="@string/title_activity_transaction" 
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             
@@ -49,15 +50,18 @@
         <service android:name="com.example.function.BluetoothService"></service>
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     </application>
+    
+      	<uses-permission android:name="android.permission.INTERNET" />
+      	  	  	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   	<uses-permission android:name="android.permission.BLUETOOTH" />
   	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-  	<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-  	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" /> 
         <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/> 
-  	<uses-permission android:name="android.permission.INTERNET" />
+
 <uses-permission android:name="android.permission.CAMERA" />
  <uses-feature android:name="android.hardware.camera" />
  <uses-feature android:name="android.hardware.camera.autofocus" />

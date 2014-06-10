@@ -17,6 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
 import jxl.write.WriteException;
+import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -37,10 +38,12 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.method.DigitsKeyListener;
+import android.util.EventLogTags.Description;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
@@ -77,7 +80,7 @@ int qtn = 0;
 	final int CHOOSECUSTOMER = 3;
 	final int CHOOSERETURNABLE =4;
 	final int COSTCODE = 5;
-	static final int STATE_FINAL = 255;
+	static final int STATE_FINAL = 522;
 //	final int CHOOSESHIPTONUMBER = ;
 	AlertDialog.Builder ad;
 	DatePickerDialog dialog;
@@ -93,6 +96,7 @@ int qtn = 0;
 	String stateshiptocity = null;
 	String stateshiptozip = null;
 	String statePrice = null;
+	String workorder = null;
 	int stateplus = 0;
 	
 	ListView list;
@@ -236,6 +240,7 @@ int qtn = 0;
 				output.setShipdate(stateshipdate);
 				Log.e("ysy", "listview" + " " + position + " " + arg3);
 				mylist.remove(position);
+		//		mylist.
 				mSchedule.notifyDataSetChanged();				
 			}
 
@@ -306,6 +311,34 @@ int qtn = 0;
 					
 		}
 		
+		public void insertReturnableDB(String itemNumberString)
+		{
+			ContentValues cv = new ContentValues();
+			cv.put("ItemNumber", itemNumberString);
+		//	int i = cargolist.size()-1;
+			int i = output.getCargoList().size()-1;
+			Log.e("ysy", "i = " + i);
+			cv.put("CustPart", output.getCargoList().get(i).getCustPart());
+	
+			cv.put("Description", output.getCargoList().get(i).getDescription());
+			cv.put("Date", output.getCargoList().get(i).getEnterdate());
+			cv.put("Time", output.getCargoList().get(i).getEntertime());
+		//	cv.put("Status", );
+			cv.put("UOM", output.getCargoList().get(i).getUOM());
+			cv.put("USERNAME", output.getUser());
+			cv.put("ShiptoNumber", output.getShipToNumber());
+			cv.put("ShiptoName", output.getShipToName());
+			cv.put("WorkOrder", output.getWorkOrder());
+			cv.put("Customer", output.getCustomerNumber());
+		//	cv.put("CustName", output.getCargoList());
+			db.insert("returnablemaster",null,cv);
+		}
+		
+		public void deleteItemOfReturnableDB(String itemNumberString)
+		{
+		//	String[] tempStrings = {itemNumberString};
+			db.delete("returnablemaster", "itemNumber" + "=?",new String[]{itemNumberString});
+		}
 //		public ArrayList<String> OutputHistory()
 //		{
 //			ArrayList<String> list = new ArrayList<String>();
@@ -376,6 +409,23 @@ int qtn = 0;
 			}
 		}
 		
+		public boolean checkexitplus(String tablename,String row, String column,String row2, String column2)
+		{
+			Cursor c = db.query(tablename, null, column + " = ?" + " AND " + column2 + " = ?", new String[]{row,row2}, null, null, null);
+
+			if(c.moveToFirst())
+			//c.isAfterLast();.isNull(columnIndex)
+			{
+				Log.e("ysy", row + " exit");
+				return true;				
+			}
+			else 
+			{
+				Log.e("ysy", row + " not exit");
+				return false; 
+			}
+		}
+		
 		public String returnDBString(String tablename,String column,String row,String column2,String row2,String returncolumn )
 		{
 			String returnString = null;
@@ -384,6 +434,17 @@ int qtn = 0;
 			Cursor c = db.query(tablename, null, column + " = ? AND "+ column2 + " = ?", new String[]{row,row2}, null, null, null);
 		//	Cursor c = db.query(tablename, null, column + " = ?", new String[]{row}, null, null, null);
 			Log.e("ysy", returncolumn);
+			if(c.moveToFirst())
+				returnString = c.getString(c.getColumnIndex(returncolumn));
+			return returnString;
+		}
+		
+		public String returnDBStringplus(String tablename, String column, String row, String returncolumn)
+		{
+			String returnString = null;
+			//Log.e("ysy", msg)
+		
+			Cursor c  = db.query(tablename,null, column + "= ?",new String[]{row},null,null,null);
 			if(c.moveToFirst())
 				returnString = c.getString(c.getColumnIndex(returncolumn));
 			return returnString;
@@ -682,7 +743,14 @@ int qtn = 0;
 //							showTwoButtonDialog("Returnable transaction?");
 							umdb.closeDB();
 							Log.e("ysy", "returnable " + statereturnable);
-							chooseReturnable();
+							if(statereturnable.equals("Y"))
+							{
+								chooseReturnable();
+							}
+							else {
+								entershipto();
+							}
+
 						}
 					}
 					).show();
@@ -690,6 +758,7 @@ int qtn = 0;
 	
 	public void chooseReturnable()
 	{
+		state = 255;
 		Log.e("ysy", "choosereturnable");
 		Log.e("ysy", "returnable " + statereturnable);
 		if(statereturnable.equals("Y"))
@@ -727,31 +796,7 @@ int qtn = 0;
 	
 	}
 	
-	//TODO need to think.
-	public void chooseCheckoutOrReturn()
-	{
-		Log.e("ysy", "choosecheckoutorreturn");
-		adialog = new AlertDialog.Builder(this).setTitle("Check out or return").setPositiveButton("CHECKING OUT", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				adialog.cancel();
-			}
-		}).setNegativeButton("RETURNING", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				adialog.cancel();
-				//TODO check the returnable database that whether it is out 
-				//if()
-				{
-					
-				}
-			}
-		}).show();
-	}
+
 	
 	// state 4
 	public void entershipto()
@@ -780,27 +825,13 @@ int qtn = 0;
      		   		return;
      		   	}
      		   	
-				if(checkShiptoNum(tempString))
+				if(checkShiptoNum(tempString,statecustomer))
 				{
 					//TODO find the autocrib
 					stateshiptonumer = tempString;
 					output.setShipToNumber(stateshiptonumer);
 					getshipto();
-					if(autocribflag().equals("Y"))
-					{
-						SimpleDateFormat sdf = new SimpleDateFormat("mmddyy");
-				//		cargo.setEnterdate(sdf.format(new java.util.Date()));
-						stateshipdate = sdf.format(new java.util.Date());
-						if(workorderflag().equals("Y"))
-							workordernumber();
-						else
-							scanitem();
-					//	showTimeDialog();
-					}
-					else 
-					{
-						showTimeDialog();
-						}
+					autocrib5();
 	//				else {
 //						  dialog.dismiss();
 //						  dialog.cancel();
@@ -820,31 +851,36 @@ int qtn = 0;
 	public void entershiptoplus(String tempString)
 	{
 		adialog.cancel();
-		if(checkShiptoNum(tempString))
+		if(checkShiptoNum(tempString,statecustomer))
 		{
 			//TODO find the autocrib
 			stateshiptonumer = tempString;
 			output.setShipToNumber(stateshiptonumer);
-			getshipto();		
-			if(autocribflag().equals("Y"))
-			{
-				SimpleDateFormat sdf = new SimpleDateFormat("mmddyy");
-		//		cargo.setEnterdate(sdf.format(new java.util.Date()));
-				stateshipdate = sdf.format(new java.util.Date());
-				if(workorderflag().equals("Y"))
-					workordernumber();
-				else
-					scanitem();
-			}
-			else 
-			{
-				showTimeDialog();
-				}
+			getshipto();
+			autocrib5();
 		}
 		else {
 			showToast("shipto number is wrong!");
 			entershipto();
 		}
+	}
+	
+	public void autocrib5()
+	{
+		if(autocribflag().equals("Y"))
+		{
+			SimpleDateFormat sdf = new SimpleDateFormat("mmddyy");
+	//		cargo.setEnterdate(sdf.format(new java.util.Date()));
+			stateshipdate = sdf.format(new java.util.Date());
+			if(workorderflag().equals("Y"))
+				workordernumber();
+			else
+				scanitem();
+		}
+		else 
+		{
+			showTimeDialog();
+			}
 	}
 	
 	
@@ -854,17 +890,29 @@ int qtn = 0;
 	{
 			UserMasterDB umdb = new UserMasterDB();
 			umdb.openDB();
-			String stateAutoCrib = umdb.returnDBString("customermaster", "Customer", statecustomer, "shiptonumber", stateshiptonumer, "Autocrib");
+			String stateAutoCrib = umdb.returnDBString("customermaster", "Customer", statecustomer, "ShiptoNumber", stateshiptonumer, "Autocrib");//("customermaster", "Customer", statecustomer,"Autocrib");
 			umdb.closeDB();
 			Toast.makeText(TransactionActivity.this, "AutoCribNum is " + stateAutoCrib, Toast.LENGTH_LONG).show();
+			Log.e("ysy", "autocrib"+stateAutoCrib);
 			return stateAutoCrib;
 	}
 	
+	public String SRMflag()
+	{
+				UserMasterDB umdb = new UserMasterDB();
+				umdb.openDB();
+				String stateAutoCrib = umdb.returnDBString("customermaster", "Customer", statecustomer, "ShiptoNumber", stateshiptonumer, "SRM");
+				//String stateAutoCrib = umdb.returnDBStringplus("customermaster", "Customer", statecustomer,"SRM");
+				umdb.closeDB();
+				Toast.makeText(TransactionActivity.this, "SRM is " + stateAutoCrib, Toast.LENGTH_LONG).show();
+				return stateAutoCrib;
+	}
 	public String workorderflag()
 	{
 		UserMasterDB umdb = new UserMasterDB();
 		umdb.openDB();
-		String stateWorkerString = umdb.returnDBString("customermaster", "Customer", statecustomer, "shiptonumber", stateshiptonumer, "WorkOrder");
+		String stateWorkerString = umdb.returnDBString("customermaster", "Customer", statecustomer, "ShiptoNumber",stateshiptonumer, "WorkOrder");
+		//String stateWorkerString = umdb.returnDBStringplus("customermaster", "Customer", statecustomer,  "WorkOrder");
 		umdb.closeDB();
 		Toast.makeText(TransactionActivity.this, "worker order is " + stateWorkerString, Toast.LENGTH_LONG).show();
 		return stateWorkerString;
@@ -908,6 +956,25 @@ int qtn = 0;
 		scanitem();
 	}
 	
+//	public void returnableSendItem(String itemNumberString)
+//	{
+//		//find the costomer in the  usermaster to see whether it is returnable customer master 
+//		UserMasterDB umdb = new UserMasterDB();
+//		umdb.openDB();
+//	//	statecustomer = list.get(which).getCustomer();
+//	//	output.setCustomerNumber(statecustomer);
+//	//	statereturnable = umdb.returnDBString("usermaster", "UserID", stateuserid, "Customer", list.get(which).getCustomer(), "Returnable");
+//		umdb.insertReturnableDB(stateitemid);
+//		umdb.closeDB();
+//	}
+//	
+//	public void returnableReturnItem(String itemNumberString)
+//	{
+//		UserMasterDB umdb = new UserMasterDB();
+//		umdb.openDB();
+//		umdb.deleteItemOfReturnableDB(itemNumberString);
+//		umdb.closeDB();
+//	}
 	
 	//Item scanning process
 	// state 6
@@ -927,6 +994,12 @@ int qtn = 0;
 				adialog.cancel();
 				stateitemid = et.getText().toString();
 				Log.e("ysy", "itemid "+ stateitemid);
+				if(whetherEmpty(stateitemid))
+				{
+					showToast("the the item id is empty");
+					ins.workordernumber();
+					return;
+				}
 				if(checkItemId(stateitemid))
 				{
 					AphaseItemTemplate newAphaseItemTemplate = getItemFromDB();
@@ -941,7 +1014,7 @@ int qtn = 0;
 
 				}
 			}
-		}).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+		}).setNegativeButton("cancel and next step", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -953,7 +1026,7 @@ int qtn = 0;
 					output.setOrderTotal(cargolist.size());
 					output.setShipdate(stateshipdate);
 					//Log.e("ysy", "insert item into sql");
-					showToast("insert item into sql");
+			//		showToast("insert item into sql");
 			//		insertOutputDBPlus(output);
 					whetherUpload();
 				}
@@ -986,6 +1059,7 @@ int qtn = 0;
 	
 	public void whetherUpload()
 	{
+		state = 255;
 		//LayoutInflater li = LayoutInflater.from(this);
 		adialog = ad.setTitle("Do you want to upload or edit this order?").setView(null).setPositiveButton("Upload", new DialogInterface.OnClickListener() {
 			
@@ -1054,7 +1128,7 @@ int qtn = 0;
 	int minustate = 0;
 	public void numdialog(AphaseItemTemplate newAphaseItemTemplate)
 	{
-		
+		state = 255;
 		
 		View view = LayoutInflater.from(this).inflate(R.layout.numdialoglayout, null);
 		ad.setView(view);
@@ -1179,16 +1253,16 @@ int qtn = 0;
  				
  				@Override
  				public void onClick(View v) {
- 					if(minustate == 0)
- 					{
- 						tvminus.setText("-");
- 						minustate =1;
- 					}
- 					else
- 					{
- 						tvminus.setText("");
- 						minustate = 0;
- 					}
+// 					if(minustate == 0)
+// 					{
+// 						tvminus.setText("-");
+// 						minustate =1;
+// 					}
+// 					else
+// 					{
+// 						tvminus.setText("");
+// 						minustate = 0;
+// 					}
 
  				}
  			});
@@ -1201,6 +1275,7 @@ int qtn = 0;
 				String tempString = tvminus.getText().toString();
 				Log.e("ysy", tempString + tv.getText().toString());
 				map.put("date", stateshipdate);
+				
 				map.put("qty", tempString + tv.getText().toString());
 				map.put("description", title);
 				mylist.add(map);
@@ -1221,10 +1296,71 @@ int qtn = 0;
 				cargolist.add(cargo);
 				mSchedule.notifyDataSetChanged();
 
-				scanitem();					
+				if(statereturnable.equals("Y"))
+				{
+					chooseCheckoutOrReturn();
+				}
+				else {
+					scanitem();					
+				}
 			}
 		});//.setNegativeButton("", listener)
  	  	adialog = ad.show();
+	}
+	
+	//TODO need to think.
+	public void chooseCheckoutOrReturn()
+	{
+		state = 255;
+		Log.e("ysy", "choosecheckoutorreturn");
+		Log.e("ysy", stateitemid);
+		adialog = new AlertDialog.Builder(this).setTitle("Check out or return").setPositiveButton("CHECKING OUT", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				adialog.cancel();
+				
+//				UserMasterDB db = new UserMasterDB();
+//				db.openDB();
+//				try {
+//					
+//					db.insertReturnableDB(stateitemid);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					// TODO: handle exception
+//				}
+//				db.closeDB();
+//				mSchedule.notifyDataSetChanged();
+				scanitem();		
+			}
+		}).setNegativeButton("RETURNING", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				adialog.cancel();
+				cargolist.get(cargolist.size()-1).setWeatherTeturn(true);
+				String qty = mylist.get(mylist.size()-1).get("qty");
+				Log.e("ysy", qty);
+				mylist.get(mylist.size()-1).put("qty", "-" + qty);
+				if(checkReturnableItem(stateitemid))
+				{
+					showToast("This item is not in returnable, please input the right item");
+					cargolist.remove(cargolist.size()-1);
+				}
+//				UserMasterDB db = new UserMasterDB();
+//				db.openDB();
+//				try {
+//					db.deleteItemOfReturnableDB(stateitemid);//;ReturnableDB(stateitemid);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				db.closeDB();
+				mSchedule.notifyDataSetChanged();
+				scanitem();		
+			}
+		}).show();
 	}
 	
 	public void enterQuantity(AphaseItemTemplate newAphaseItemTemplate)
@@ -1248,8 +1384,33 @@ int qtn = 0;
 //	    WriteExcel test = new WriteExcel();
 //	    test.setOutputFile("/Users/shiyaoyu/test.xls");
 	//    test.write();
-		String name = "/mnt/sdcard/Ezsource/test.xls";
-		stx.setOutputFile(name);
+	//	String name = "/mnt/sdcard/Ezsource/test.xls";
+		String filenameString = "";
+		SharedPreferences costomercode = getSharedPreferences("MyPrefsFile", 0);
+		String costomercodeString = costomercode.getString("costomercode", "");
+		String date = output.getCargoList().get(0).getEnterdate().replace("-", "");
+		String time = output.getCargoList().get(0).getEntertime().replace(":", "");
+		//1
+		if(autocribflag().equals("Y"))
+		{
+			filenameString = "Autocrib" + costomercodeString + "_" + output.getCustomerNumber() +"_" + "EZ" + "_" +date + "_" +time+ ".xls";
+		}
+		//2
+		if(autocribflag().equals("N")&&SRMflag().equals("N"))
+		{
+			filenameString = costomercodeString + "_" + output.getCustomerNumber() + "_" + date + "_" +time + ".xls";
+		}
+		//3
+		if(SRMflag().equals("Y"))
+		{
+			filenameString = "SRM" + costomercodeString + "_" + output.getCustomerNumber() +"_" + "SRM" +  "_" + date + "_" +time  + ".xls";
+		}
+		//4
+		if(statereturnable.equals("Y"))
+		{
+			filenameString = costomercodeString +"_"+ "RET" + "_" + date + "_" +time +  ".xls";
+		}
+		stx.setOutputFile(filenameString);
 		try {
 			stx.write(output);
 		} catch (WriteException e) {
@@ -1261,7 +1422,7 @@ int qtn = 0;
 		}
 		
 		SendEmailThread seThread = new SendEmailThread();
-		seThread.setname(name);
+		seThread.setname(filenameString);
 		seThread.start();
 
 	}
@@ -1281,15 +1442,20 @@ int qtn = 0;
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			  String astring =Environment.getExternalStorageDirectory().getPath()  +java.io.File.separator+"Ezsource/"+name;; 
 			try{
 				GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
 		//		GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
-				sender.sendMail("bla", "bla", "yuysyu@gmail.com", "yuysyu@gmail.com",name);
+				sender.sendMail("bla", "bla", "yuysyu@gmail.com", "yuysyu@gmail.com",astring,name);
 			}
 			catch(Exception e)
 			{
 				Log.e("SendMail", e.getMessage());
 			}
+		//	  String astring =Environment.getExternalStorageDirectory().getPath()  +java.io.File.separator+"Ezsource/"+name;; 
+			    java.io.File file = new  java.io.File(astring);
+			    file.delete();
+			
 			super.run();
 		}
 		
@@ -1298,7 +1464,7 @@ int qtn = 0;
 
 	public void showTimeDialog()
 	{
-		
+		state = 255;
 		DatePickerDialog.OnDateSetListener dateListener =   
 			    new DatePickerDialog.OnDateSetListener() {  
 			        @Override  
@@ -1344,6 +1510,21 @@ int qtn = 0;
 		UserMasterDB umdb = new UserMasterDB();
 		umdb.openDB();
 		umdb.insertOutputDB(output);
+		if(statereturnable.equals("Y"))
+		{
+			Log.e("ysy", "yinyinyin");
+			int i = output.getCargoList().size();
+			for(;i>0;i--)
+			{
+				if(output.getCargoList().get(i-1).isWeatherTeturn())
+				{
+					umdb.deleteItemOfReturnableDB(output.getCargoList().get(i-1).getItem());
+				}
+				else {
+					umdb.insertReturnableDB(output.getCargoList().get(i-1).getItem());
+				}
+			}
+		}
 		umdb.closeDB();
 	}
 	
@@ -1379,12 +1560,22 @@ int qtn = 0;
 		return tpstate;		
 	}
 	
-	boolean checkShiptoNum(String shipto)
+	boolean checkReturnableItem(String returnableItemString)
+	{
+		UserMasterDB umdb = new UserMasterDB();
+		umdb.openDB();
+		boolean tpstate = umdb.checkexit("returnablemaster", "ItemNumber", returnableItemString);
+		umdb.closeDB();
+		return tpstate;
+	}
+	
+	boolean checkShiptoNum(String shipto,String customer )
 	{
 		Log.e("ysy", "chechshiptonum");
 		UserMasterDB umdb = new UserMasterDB();
 		umdb.openDB();
-		boolean tpstate = umdb.checkexit("customermaster", shipto,"ShiptoNumber" );
+	//boolean tpstate = umdb.checkexit("customermaster", shipto,"ShiptoNumber" );
+		boolean tpstate = umdb.checkexitplus("customermaster", shipto, "ShiptoNumber", customer, "Customer");
 		umdb.closeDB();
 		return tpstate;
 	}

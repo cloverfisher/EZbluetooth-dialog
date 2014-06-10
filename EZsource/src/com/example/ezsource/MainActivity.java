@@ -13,7 +13,6 @@ import java.util.concurrent.Semaphore;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentValues;
@@ -33,7 +32,6 @@ import android.widget.Toast;
 import com.example.function.XlsToString;
 import com.example.source.AphaseItemTemplate;
 import com.example.source.CustomerMasterfile;
-import com.example.source.NumberDialog;
 import com.example.source.Output;
 import com.example.source.ReturnableItem;
 import com.example.source.UserMaster;
@@ -42,12 +40,35 @@ import com.google.api.services.drive.Drive.Files;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
+/*
+ * Activity
+ * Main activity
+ * transaction activity
+ * bluetooth activity: find paired bluetooth device
+ * CostomerCodeActivity: setting the prefix code
+ * DBqueryActivity: query the normal/returnable database
+ * HistoryActivity: search the transaction database
+ * 
+ * Function
+ * StringToXLS: transfer the string to xls file
+ * XlsToString: transfer the xls file to string
+ * 
+ * 
+ * Source
+ * AphaseItemTemplate: conclude  item information
+ * CustomerMaster: a class conclude a customer information
+ * Cargo： a class conclude a transaction item
+ * Output: a class conclude a transaction
+ * ReturnableItem: a returnable item information
+ * UserMaster: a user information
+ * 
+ * */
 
 public class MainActivity extends Activity {
 	BluetoothAdapter mBluetoothAdapter;
 	UUID uuid;
 	Semaphore semp = new Semaphore(0);
-	
+	ProgressDialog barProgressDialog;
 	SharedPreferences costomercodeString;
 	List<UserMaster> umlist = null;
 	List<CustomerMasterfile> cmlist = null;
@@ -65,29 +86,10 @@ public class MainActivity extends Activity {
 		String silent = costomercodeString.getString("costomercode", "");
 		setContentView(R.layout.mainactivity);
 
-		 
-//		try {
-//			newDb.openDB();
-//		//	newDb.buildDB();
-//		//	newDb.bla();
-//			//newDb.checktableExist();
-//			newDb.closeDB();
-//			//newDb.
-//		} catch (Exception e) {
-//			// TODO: handle exception
-//			updatedb();
-//			newDb.openDB();
-//			newDb.newOutputDB();
-//			newDb.closeDB();
-//	
-//		}
-//
-//
-//		newDb.closeDB();
-	// Transaction button	
-		Button button;
-		button = (Button)findViewById(R.id.btnstartnewtran);
-		button.setOnClickListener(
+		// Transaction button	
+		Button transactionButton;
+		transactionButton = (Button)findViewById(R.id.btnstartnewtran);
+		transactionButton.setOnClickListener(
 			new View.OnClickListener() {
 				
 				@Override
@@ -95,28 +97,20 @@ public class MainActivity extends Activity {
 					Intent intent = new Intent();
 					intent.setClass(MainActivity.this, TransactionActivity.class);
 					startActivity(intent);
-					
-//					NumberDialog dialog = new NumberDialog(MainActivity.this);
-//					dialog.show();
 				}
 			}
 		);
+		
 		// View Transaction history
 		Button btnViewHistory;
-		
 		btnViewHistory = (Button)findViewById(R.id.btnhistory);
 		btnViewHistory.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				ArrayList<String> list =  OutputHistoryPlus();
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, HistoryActivity.class);
-//				Bundle bundle = new Bundle();
-//				bundle.putStringArrayList("alist", list);
-//			//	intent.putExtra("alist", list);
-//				intent.putExtras(bundle);
 				startActivity(intent);
 			}
 		});
@@ -133,6 +127,7 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+		/*
 	//no use now	
 		Button btnSettingButton;
 		btnSettingButton = (Button)findViewById(R.id.btnsetting);
@@ -140,16 +135,14 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO 这里先把newOutputDB 方法放在这，到时候转到别的地方
-				newDb.openDB();
-				newDb.newOutputDB();
-				newDb.closeDB();
-//				Intent intent = new Intent();
-//				intent.setClass(MainActivity.this, AccountActivity.class);
-//				startActivity(intent);
+		//		intent.setClass(MainActivity.this, TestActivity.class);
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, TestActivity.class);
+				startActivity(intent);
 				
 			}
 		});
+		*/
 	//update the database by the inputfile
 		Button btnDBUpdate;
 		btnDBUpdate = (Button)findViewById(R.id.btndbupdate);
@@ -186,7 +179,6 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				
 				AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
 				ad.setTitle("search item or returnable item DB").setPositiveButton("normal item", new DialogInterface.OnClickListener() {
@@ -590,55 +582,80 @@ public class MainActivity extends Activity {
 				
 				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		 });
 		 t.start();
 	}
+	
+	//TODO TEST
 	  void updatedb()
 	  {
+		  
+		  barProgressDialog = new ProgressDialog(MainActivity.this);
+		  barProgressDialog.setTitle("Update database");
+		  barProgressDialog.show();
 			Log.e("ysy", "add new db");
-			newDb.openDB();
-			newDb.buildDB();
+			
+			new Thread(new Runnable(){
 
-			 XlsToString xts = new XlsToString();
-			 try {
-				umlist =  xts.catchUsermaster();
-				cmlist = xts.catchCustomermaster();
-				rilist = xts.catchReturnableItem();
-				aitlist = xts.catchAphaseItemTemplate();
+				@Override
+				public void run() {
+					newDb.openDB();
+					newDb.buildDB();
 
-			} catch (Exception ea) {
-				// TODO: handle exception
-			}
-			int umlistsie = umlist.size();
-			int cmlistsize = cmlist.size();
-			int aitlistsize = aitlist.size();
-			int rilistsize = rilist.size();
-			Log.e("ysy", "item set size = "+aitlistsize);
-			ProgressDialog pdialog = ProgressDialog.show(MainActivity.this, "loading", "please wait a few minutes"); 
-			for(int i = 0; i < umlistsie; i++)
-			{
-				newDb.insertUserMasterDB(umlist.get(i));
-			}
-			for(int i = 0;i <  cmlistsize;i++)
-			{
-				newDb.insertCustomerMasterDB(cmlist.get(i));
-			}
-			for(int i = 0; i < rilistsize ; i++)
-			{
-				newDb.insertReturnableItemDB(rilist.get(i));
-				Log.e("ysy", "return " + i);
-			}
-			for(int i=0; i < aitlistsize ; i++)
-			{
-				newDb.insertItemDB(aitlist.get(i));
-				Log.e("ysy", "item" + i);
-			}
-			pdialog.cancel();
-			newDb.closeDB();
+					 XlsToString xts = new XlsToString();
+					 try {
+						umlist =  xts.catchUsermaster();
+						cmlist = xts.catchCustomermaster();
+						rilist = xts.catchReturnableItem();
+						aitlist = xts.catchAphaseItemTemplate();
+
+					} catch (Exception ea) {
+						// TODO: handle exception
+					}
+					int umlistsie = umlist.size();
+					int cmlistsize = cmlist.size();
+					int aitlistsize = aitlist.size();
+					int rilistsize = rilist.size();
+					Log.e("ysy", "item set size = "+aitlistsize);
+		//			ProgressDialog pdialog = ProgressDialog.show(MainActivity.this, "loading", "please wait a few minutes"); 
+		//			barProgressDialog.setMessage("update usermaster database");
+					barProgressDialog.setMax(umlistsie);
+					
+					for(int i = 0; i < umlistsie; i++)
+					{
+						barProgressDialog.setProgress(i);
+						newDb.insertUserMasterDB(umlist.get(i));
+					}
+		//			barProgressDialog.setMessage("update customer master database");
+					for(int i = 0;i <  cmlistsize;i++)
+					{
+						barProgressDialog.setProgress(i);
+						newDb.insertCustomerMasterDB(cmlist.get(i));
+					}
+		//			barProgressDialog.setMessage("update returnable master database");
+					for(int i = 0; i < rilistsize ; i++)
+					{
+						barProgressDialog.setProgress(i);
+						newDb.insertReturnableItemDB(rilist.get(i));
+						Log.e("ysy", "return " + i);
+					}
+		//			barProgressDialog.setMessage("update item master database");
+					for(int i=0; i < aitlistsize ; i++)
+					{
+						barProgressDialog.setProgress(i);
+						newDb.insertItemDB(aitlist.get(i));
+						Log.e("ysy", "item" + i);
+					}
+				//	pdialog.cancel();
+					newDb.closeDB();
+					
+				}
+				
+			}).start();
+	
 	  }
 	
 	

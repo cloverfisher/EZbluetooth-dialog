@@ -71,7 +71,7 @@ int drawable ic_plusone_small_off_client 0x7f02001a
 int drawable ic_plusone_standard_off_client 0x7f02001b
 int drawable ic_plusone_tall_off_client 0x7f02001c
 int id SearchButton 0x7f04001b
-int id action_settings 0x7f040046
+int id action_settings 0x7f040045
 int id alignBounds 0x7f040002
 int id alignMargins 0x7f040003
 int id bottom 0x7f040005
@@ -101,9 +101,9 @@ int id center_vertical 0x7f040008
 int id clip_horizontal 0x7f04000f
 int id clip_vertical 0x7f04000e
 int id costomercode 0x7f040018
-int id editTextDialogUserInput 0x7f040045
-int id editTextExchangeCode 0x7f040042
-int id editTextIdToken 0x7f040043
+int id editTextDialogUserInput 0x7f040044
+int id editTextExchangeCode 0x7f040041
+int id editTextIdToken 0x7f040042
 int id editTextcostomercode 0x7f040022
 int id editTextsearch 0x7f04001a
 int id end 0x7f040011
@@ -113,7 +113,7 @@ int id fill_vertical 0x7f040009
 int id historylistview 0x7f04001c
 int id horizontal 0x7f040000
 int id hybrid 0x7f040016
-int id layout_root 0x7f040044
+int id layout_root 0x7f040043
 int id left 0x7f040006
 int id listView1 0x7f040023
 int id listdate 0x7f04002e
@@ -133,7 +133,6 @@ int id tableRow1 0x7f04001d
 int id tableRow2 0x7f040036
 int id tableRow3 0x7f04003a
 int id tableRow4 0x7f04003d
-int id tableRow5 0x7f040041
 int id terrain 0x7f040015
 int id textView0 0x7f040033
 int id textView1 0x7f040017

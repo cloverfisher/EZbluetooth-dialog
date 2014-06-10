@@ -21,12 +21,17 @@ public class XlsToString {
 	
 	public List catchUsermaster() throws BiffException, IOException
 	{
-		  
+		
+		
 		  String path = Environment.getExternalStorageDirectory().getPath();
-		  File file = new File(path + "/Ezsource/UserMaster");
-		  String filename = file.listFiles()[0].getPath();
-	//	  file = new File(filename);
-		  file = new File("/mnt/sdcard/Ezsource/UserMaster/UserMaster.xls");
+		  path = path + "/Android/data/com.dropbox.android/files/scratch";
+		  File file = new File(path + "/UserMaster.xls");
+		  
+//		  String path = Environment.getExternalStorageDirectory().getPath();
+//		  File file = new File(path + "/Ezsource/UserMaster");
+//		  String filename = file.listFiles()[0].getPath();
+//	//	  file = new File(filename);
+//		  file = new File("/mnt/sdcard/Ezsource/UserMaster/UserMaster.xls");
 	//	  filename = path + "/Ezsource/UserMaster/" + "UserMaster.xls";
 	//	  Workbook.getWorkbook(file);
 	//	  InputStream is = new FileInputStream(filename);
@@ -65,10 +70,12 @@ public class XlsToString {
 	{
 		  
 		  String path = Environment.getExternalStorageDirectory().getPath();
-		  File file = new File(path + "/Ezsource/UserMaster");
-		  String filename = file.listFiles()[0].getPath();
+		  path = path + "/Android/data/com.dropbox.android/files/scratch";
+		  File file = new File(path + "/CustomerMasterfile.xls");
+	//	  File file = new File(path + "/Ezsource/UserMaster");
+//		  String filename = file.listFiles()[0].getPath();
 	//	  file = new File(filename);
-		  file = new File("/mnt/sdcard/Ezsource/CustomerMaster/CustomerMasterfile.xls");
+	//	  file = new File("/mnt/sdcard/Ezsource/CustomerMaster/CustomerMasterfile.xls");
 	//	  filename = path + "/Ezsource/UserMaster/" + "UserMaster.xls";
 
 	//	  InputStream is = new FileInputStream(filename);
@@ -115,10 +122,14 @@ public class XlsToString {
 	
 	public List catchAphaseItemTemplate()
 	{
-		String path = Environment.getExternalStorageDirectory().getPath();
-		File file = new File(path + "/Ezsource/AphaseItemTemplate");
-		String filename = file.listFiles()[0].getPath();
-		file = new File(path + "/Ezsource/AphaseItemTemplate/AphaseItemTemplate.xls");
+//		String path = Environment.getExternalStorageDirectory().getPath();
+//		File file = new File(path + "/Ezsource/AphaseItemTemplate");
+//		String filename = file.listFiles()[0].getPath();
+//		file = new File(path + "/Ezsource/AphaseItemTemplate/AphaseItemTemplate.xls");
+
+		  String path = Environment.getExternalStorageDirectory().getPath();
+		  path = path + "/Android/data/com.dropbox.android/files/scratch";
+		  File file = new File(path + "/AphaseItemTemplate.xls");
 		
 		List<AphaseItemTemplate> list = new ArrayList<AphaseItemTemplate>();
 		try {
@@ -144,7 +155,7 @@ public class XlsToString {
 				list.add(ait);
 			}
 		} catch (Exception e) {
-			Log.e("ysy ", e.toString());
+			e.printStackTrace();
 			// TODO: handle exception
 		}
 		return list;
@@ -152,8 +163,12 @@ public class XlsToString {
 	
 	public List catchReturnableItem()
 	{
-		String path = Environment.getExternalStorageDirectory().getPath();
-		File file = new File(path + "/Ezsource/ReturnableItems/ReturnableItems.xls");
+		
+		  String path = Environment.getExternalStorageDirectory().getPath();
+		  path = path + "/Android/data/com.dropbox.android/files/scratch";
+		  File file = new File(path + "/ReturnableItems.xls");
+//		String path = Environment.getExternalStorageDirectory().getPath();
+//		File file = new File(path + "/Ezsource/ReturnableItems/ReturnableItems.xls");
 		Workbook rwb;
 		List<ReturnableItem> list = new ArrayList<ReturnableItem>();
 		try{
@@ -162,7 +177,7 @@ public class XlsToString {
 			int rowsnum = rs.getRows();
 			rs.getColumns();
 			Log.e("ysy", "returnablerow " + rs.getColumns());	
-			for(int i=0; i<rowsnum; i++)
+			for(int i=1; i<rowsnum; i++)
 			{
 				Cell[] cc = rs.getRow(i);
 				ReturnableItem rItem = new ReturnableItem(cc);

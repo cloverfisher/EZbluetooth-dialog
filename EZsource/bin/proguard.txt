@@ -1,27 +1,27 @@
-# view AndroidManifest.xml #generated:30
+# view AndroidManifest.xml #generated:31
 -keep class com.example.ezsource.AccountActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:36
+# view AndroidManifest.xml #generated:37
 -keep class com.example.ezsource.BluetoothActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:42
+# view AndroidManifest.xml #generated:43
 -keep class com.example.ezsource.CostomerCodeActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:46
+# view AndroidManifest.xml #generated:47
 -keep class com.example.ezsource.DBqueryActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:33
+# view AndroidManifest.xml #generated:34
 -keep class com.example.ezsource.HistoryActivity { <init>(...); }
 
 # view AndroidManifest.xml #generated:15
 -keep class com.example.ezsource.MainActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:39
+# view AndroidManifest.xml #generated:40
 -keep class com.example.ezsource.TestActivity { <init>(...); }
 
 # view AndroidManifest.xml #generated:24
 -keep class com.example.ezsource.TransactionActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:49
+# view AndroidManifest.xml #generated:50
 -keep class com.example.function.BluetoothService { <init>(...); }
 

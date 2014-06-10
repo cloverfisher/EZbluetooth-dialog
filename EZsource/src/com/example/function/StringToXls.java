@@ -18,6 +18,7 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
+import android.os.Environment;
 import android.util.Log;
 
 import com.example.source.Cargo;
@@ -34,7 +35,21 @@ public class StringToXls {
 	  }
 
 	  public void write(Output output) throws IOException, WriteException {
-	    File file = new File(inputFile);
+		  
+		  String astring =Environment.getExternalStorageDirectory().getPath()  +File.separator+"Ezsource/"+inputFile;; 
+			Log.e("ysy", astring);
+			File file = new File(astring);
+			//file.cre
+//			file.mkdirs();
+			try {
+				file.createNewFile();
+				Log.e("ysy", "nani!");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  
+
 	    Log.e("ysy", inputFile);
 	    WorkbookSettings wbSettings = new WorkbookSettings();
 
@@ -232,23 +247,23 @@ public class StringToXls {
 	    sheet.addCell(label);
 	  }
 
-
-	public String getOneSheet(Output output)
-	{
-		StringToXls test = new StringToXls();
-	//	String nameString = output.get
-	//	if(output.)
-		String nameString = "/mnt/sdcard/Ezsource/test.xls";
-	    test.setOutputFile(nameString);
-	    try {
-			test.write(output);
-		} catch (WriteException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	    return nameString;
-	}
+//
+//	public String getOneSheet(Output output, String name)
+//	{
+//		StringToXls test = new StringToXls();
+//	//	String nameString = output.get
+//	//	if(output.)
+//		String nameString = name;
+//	    test.setOutputFile(nameString);
+//	    try {
+//			test.write(output);
+//		} catch (WriteException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	    return nameString;
+//	}
 	
 	public StringToXls()
 	{

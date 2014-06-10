@@ -10,6 +10,16 @@ public class Cargo {
 	String enterdate;
 	String entertime;
 	String onOrder;
+	boolean weatherTeturn = false;
+	
+	
+	public boolean isWeatherTeturn() {
+		return weatherTeturn;
+	}
+	public void setWeatherTeturn(boolean weatherTeturn) {
+		this.weatherTeturn = weatherTeturn;
+	}
+	
 	public String getQty() {
 		return qty;
 	}
