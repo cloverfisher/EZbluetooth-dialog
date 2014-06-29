@@ -1,8 +1,4 @@
 package com.example.ezsource;
-
-
-
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -244,32 +240,12 @@ public class MainActivity extends Activity {
 		return list;
 	}
 	
-	//just for test
+	//database control
 	private class UserMasterDB
 	{
 		SQLiteDatabase db;
 		
-//		public boolean exists(String table) {
-//		    try {
-//		         db.query("SELECT * FROM " + table, null, table, null, table, table, table);
-//		         return true;
-//		    } catch () {
-//		         return false;
-//		    }
-//		}
-		
-		public void newOutputDB()
-		{
-			db.execSQL("DROP TABLE IF EXISTS outputmaster");
-			db.execSQL("create table outputmaster (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-					+ "Customer varchar,costCode varchar,ShiptoNumber varchar,"
-					+ "ShiptoName varchar, ShiptoAddress varchar, ShiptoCity varchar,"
-					+ "ShiptoState varchar, ShiptoZip varchar,"
-					+ "OrderTotal varchar, Warehouse varchar, WorkOrder varchar,"
-					+ "Price varchar, CustPart varchar,Item varchar,"
-					+ "Description varchar, EnterDate date,EnterTime varchar, OnOrder varchar)");
-	
-		}
+
 		
 		public UserMasterDB()
 		{
@@ -301,8 +277,6 @@ public class MainActivity extends Activity {
 			if(!c.moveToFirst())
 				return list;
 			UserMaster um = new UserMaster();
-//			um.setCustName(c.getString(c.getColumnIndex("CustName")));
-//			um.setCustomer(c.getString(c.getColumnIndex("Customer")));
 			StringBuffer sb2 = new StringBuffer();
 			sb2.append("\tEnterDate:" + c.getString(c.getColumnIndex("EnterDate")) +"\t");
 			sb2.append("\tEnterTime:" + c.getString(c.getColumnIndex("EnterTime")) +"\n");
@@ -503,11 +477,7 @@ public class MainActivity extends Activity {
 			sdf.format(new java.util.Date());
 			db.delete("outputmaster", "EnterDate<?",lastmonth);
 		}
-		
-		public void viewhistry()
-		{
-			
-		}
+
 		public boolean checkexit(String tablename,String row, String column)
 		{
 			Cursor c = db.query(tablename, null, column + " = ?", new String[]{row}, null, null, null);
@@ -527,11 +497,9 @@ public class MainActivity extends Activity {
 
 		
 	}
-	
-//	
-//	
 
 
+//create folder in mobile
 	public void creatpath()
 	{
 		String path = Environment.getExternalStorageDirectory().getPath();//.getExternalStorageDirectory();
@@ -589,7 +557,7 @@ public class MainActivity extends Activity {
 		 t.start();
 	}
 	
-	//TODO TEST
+	// update database
 	  void updatedb()
 	  {
 		  
@@ -620,8 +588,6 @@ public class MainActivity extends Activity {
 					int aitlistsize = aitlist.size();
 					int rilistsize = rilist.size();
 					Log.e("ysy", "item set size = "+aitlistsize);
-		//			ProgressDialog pdialog = ProgressDialog.show(MainActivity.this, "loading", "please wait a few minutes"); 
-		//			barProgressDialog.setMessage("update usermaster database");
 					barProgressDialog.setMax(umlistsie);
 					
 					for(int i = 0; i < umlistsie; i++)
@@ -629,20 +595,17 @@ public class MainActivity extends Activity {
 						barProgressDialog.setProgress(i);
 						newDb.insertUserMasterDB(umlist.get(i));
 					}
-		//			barProgressDialog.setMessage("update customer master database");
 					for(int i = 0;i <  cmlistsize;i++)
 					{
 						barProgressDialog.setProgress(i);
 						newDb.insertCustomerMasterDB(cmlist.get(i));
 					}
-		//			barProgressDialog.setMessage("update returnable master database");
 					for(int i = 0; i < rilistsize ; i++)
 					{
 						barProgressDialog.setProgress(i);
 						newDb.insertReturnableItemDB(rilist.get(i));
 						Log.e("ysy", "return " + i);
 					}
-		//			barProgressDialog.setMessage("update item master database");
 					for(int i=0; i < aitlistsize ; i++)
 					{
 						barProgressDialog.setProgress(i);

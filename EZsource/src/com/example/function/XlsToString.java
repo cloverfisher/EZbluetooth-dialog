@@ -16,6 +16,8 @@ import jxl.read.biff.BiffException;
 import android.os.Environment;
 import android.util.Log;
 
+
+//transfer excel file to string
 public class XlsToString {
 	
 	
@@ -26,15 +28,7 @@ public class XlsToString {
 		  String path = Environment.getExternalStorageDirectory().getPath();
 		  path = path + "/Android/data/com.dropbox.android/files/scratch";
 		  File file = new File(path + "/UserMaster.xls");
-		  
-//		  String path = Environment.getExternalStorageDirectory().getPath();
-//		  File file = new File(path + "/Ezsource/UserMaster");
-//		  String filename = file.listFiles()[0].getPath();
-//	//	  file = new File(filename);
-//		  file = new File("/mnt/sdcard/Ezsource/UserMaster/UserMaster.xls");
-	//	  filename = path + "/Ezsource/UserMaster/" + "UserMaster.xls";
-	//	  Workbook.getWorkbook(file);
-	//	  InputStream is = new FileInputStream(filename);
+
 		  List<UserMaster> list = new ArrayList<UserMaster>();
 		
 		  try{
@@ -72,14 +66,6 @@ public class XlsToString {
 		  String path = Environment.getExternalStorageDirectory().getPath();
 		  path = path + "/Android/data/com.dropbox.android/files/scratch";
 		  File file = new File(path + "/CustomerMasterfile.xls");
-	//	  File file = new File(path + "/Ezsource/UserMaster");
-//		  String filename = file.listFiles()[0].getPath();
-	//	  file = new File(filename);
-	//	  file = new File("/mnt/sdcard/Ezsource/CustomerMaster/CustomerMasterfile.xls");
-	//	  filename = path + "/Ezsource/UserMaster/" + "UserMaster.xls";
-
-	//	  InputStream is = new FileInputStream(filename);
-	//	  Workbook rwb;
 		  List<CustomerMasterfile> list = new ArrayList<CustomerMasterfile>();
 		  try{
 			  Workbook  rwb = Workbook.getWorkbook(file);
@@ -93,22 +79,6 @@ public class XlsToString {
 			//	  Cell cc = rs.getCell(i,0);
 				  Cell[] cc = rs.getRow(i);
 				  CustomerMasterfile cm = new CustomerMasterfile(cc);
-//				  CustomerMasterfile cm= new CustomerMasterfile(cc[0].getContents(), 
-//						  cc[1].getContents(), 
-//						  cc[2].getContents(), 
-//						  cc[3].getContents(), 
-//						  cc[4].getContents(), 
-//						  cc[5].getContents(), 
-//						  cc[6].getContents(), 
-//						  cc[7].getContents(), 
-//						  cc[8].getContents(), 
-//						  cc[9].getContents(), 
-//						  cc[10].getContents(), 
-//						  cc[11].getContents(), 
-//						  cc[12].getContents(), 
-//						  cc[13].getContents(), 
-//						  cc[14].getContents(), 
-//						  cc[15].getContents());
 
 				  list.add(cm);
 			  }
@@ -122,11 +92,6 @@ public class XlsToString {
 	
 	public List catchAphaseItemTemplate()
 	{
-//		String path = Environment.getExternalStorageDirectory().getPath();
-//		File file = new File(path + "/Ezsource/AphaseItemTemplate");
-//		String filename = file.listFiles()[0].getPath();
-//		file = new File(path + "/Ezsource/AphaseItemTemplate/AphaseItemTemplate.xls");
-
 		  String path = Environment.getExternalStorageDirectory().getPath();
 		  path = path + "/Android/data/com.dropbox.android/files/scratch";
 		  File file = new File(path + "/AphaseItemTemplate.xls");
@@ -141,17 +106,6 @@ public class XlsToString {
 			{
 				Cell[] cc = rs.getRow(i);
 				AphaseItemTemplate ait = new AphaseItemTemplate(cc);
-//				AphaseItemTemplate ait = new AphaseItemTemplate(
-//						cc[0].getContents(),
-//						cc[1].getContents(),
-//						cc[2].getContents(),
-//						cc[3].getContents(),
-//						cc[4].getContents(),
-//						cc[5].getContents(),
-//						cc[6].getContents(),
-//						cc[7].getContents(),
-//						cc[8].getContents()
-//						);
 				list.add(ait);
 			}
 		} catch (Exception e) {
@@ -181,19 +135,6 @@ public class XlsToString {
 			{
 				Cell[] cc = rs.getRow(i);
 				ReturnableItem rItem = new ReturnableItem(cc);
-//				ReturnableItem rItem = new ReturnableItem(cc[0].getContents(),
-//						cc[1].getContents(),
-//						cc[2].getContents(),
-//						cc[3].getContents(),
-//						cc[4].getContents(),
-//						cc[5].getContents(),
-//						cc[6].getContents(),
-//						cc[7].getContents(),
-//						cc[8].getContents(),
-//						cc[9].getContents(),
-//						cc[10].getContents(),
-//						cc[11].getContents(),
-//						cc[12].getContents());
 				list.add(rItem);
 			}
 		}

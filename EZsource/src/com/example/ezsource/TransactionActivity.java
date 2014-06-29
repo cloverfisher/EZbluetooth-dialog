@@ -66,6 +66,7 @@ import com.google.android.gms.internal.i;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.Drive.About.Get;
 import com.google.api.services.drive.model.File;
 
 public class TransactionActivity extends Activity {
@@ -100,49 +101,42 @@ int qtn = 0;
 	int stateplus = 0;
 	
 	ListView list;
-	
-//	String statetime = null;
-	
-//	static Handler ahandler;
-	
-	
-	int bluetoothdevice;
-	  static final int REQUEST_ACCOUNT_PICKER = 1;
-	  static final int REQUEST_AUTHORIZATION = 2;
-	  static final int CAPTURE_IMAGE = 3;
-	
-	Semaphore semp = new Semaphore(0);
-	
-	Output output = new Output();
-	
-	//Cargo cargo = new Cargo();
-	List<Cargo> cargolist = new ArrayList();
-	Calendar calendar = Calendar.getInstance();  
-
-	SharedPreferences costomercode;
-	String costomercodeString;
+	//mylist is the this that should be showed in listview
 	ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
 	
-
+	int bluetoothdevice;
+//	  static final int REQUEST_ACCOUNT_PICKER = 1;
+//	  static final int REQUEST_AUTHORIZATION = 2;
+//	  static final int CAPTURE_IMAGE = 3;
 	
-	public boolean costomerCodeOn()
+//	Semaphore semp = new Semaphore(0);
+	
+	//a output contain the user and costermer information and many caogo(item) information
+	Output output = new Output();
+	List<Cargo> cargolist = new ArrayList();
+	//
+	Calendar calendar = Calendar.getInstance();  
+
+	//get prefix
+	SharedPreferences prefixCode;
+	String prefixString;
+	public boolean getPrefix()
 	{
-		costomercode = getSharedPreferences("MyPrefsFile", 0);
-		costomercodeString = costomercode.getString("costomercode", "");
-		if(costomercodeString.equals(""))
+		prefixCode = getSharedPreferences("MyPrefsFile", 0);
+		prefixString = prefixCode.getString("costomercode", "");
+		if(prefixString.equals(""))
 		{
 			Toast.makeText(this, "please input your costomer code in device", Toast.LENGTH_LONG).show();
 			return false;
 		}
 		else {
 			return true;
-		}
-		
+		}	
 	}
 	public static TransactionActivity ins = null;
 	
 	/*
-	 * Handler
+	 * Bluetooth Handler
 	 * */
 	public static Handler ahandler = new Handler()
 	{
@@ -154,16 +148,16 @@ int qtn = 0;
         	tempstring = msg.obj.toString();
         	tempstring = tempstring.trim();
 	        switch (msg.what) {
-	        case 1: //state 1
+	        case 1: //state 1 
 	        {
 	        	switch(state)
 	        	{
-	        	case 1:
+	        	case 1: //enteruserid
 	        	{
 	        		tempstring = msg.obj.toString();
 	        		ins.enteruseridplus(tempstring);
 	        	}
-		        case 2:
+		        case 2: //enter user pin
 		        {
 		        	Log.e("ysy", "enterpin");
 		        //	tempstring = msg.obj.toString();
@@ -171,31 +165,29 @@ int qtn = 0;
 	
 		        	break;
 		        }
-		        case 4:
+		        case 4: //enter shipto code
 		        {
 		       // 	tempstring = msg.obj.toString();
 		        	ins.entershiptoplus(tempstring);
 		        	break;
 		        }
-		        case 5:
+		        case 5: //enter workorder number
 		        {
 		         //	tempstring = msg.obj.toString();
 		        	ins.workordernumberplus(tempstring);
 		        	break;
 		        }
-		        case 6:
+		        case 6: //enter item number
 		        {
 		     //   	tempstring = msg.obj.toString();
 		        	ins.scanitemplus(tempstring);
 		        	break;
 		        }  
-		        case STATE_FINAL:
+		        case STATE_FINAL: //delete next order or down
 		        {
 		        	ins.uploadbyBluetoothplus(tempstring);
 		        }
 	        	}
-	     //   	tempstring = msg.obj.toString();
-	        //	enteruseridplus(tempstring);
 	        	Log.e("ysy","lalalala" + tempstring);
 	        	break;
 	        }
@@ -214,7 +206,7 @@ int qtn = 0;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_transaction);
 		ins = this;
-		if(!costomerCodeOn())
+		if(!getPrefix())
 		{
 			finish();
 		}
@@ -261,6 +253,7 @@ int qtn = 0;
 	
 	}
 
+	// show the toast message
 	  public void showToast(final String toast) {
 		    runOnUiThread(new Runnable() {
 		      @Override
@@ -278,7 +271,7 @@ int qtn = 0;
 		return true;
 	}
 
-
+	//database function
 	private class UserMasterDB
 	{
 		SQLiteDatabase db;
@@ -339,49 +332,8 @@ int qtn = 0;
 		//	String[] tempStrings = {itemNumberString};
 			db.delete("returnablemaster", "itemNumber" + "=?",new String[]{itemNumberString});
 		}
-//		public ArrayList<String> OutputHistory()
-//		{
-//			ArrayList<String> list = new ArrayList<String>();
-//		//	db.qu
-//			Cursor c = db.query("outputmaster", null,null, null, null, null, null);
-//	//c.getCount()
-//			if(!c.moveToFirst())
-//				return list;
-//			UserMaster um = new UserMaster();
-////			um.setCustName(c.getString(c.getColumnIndex("CustName")));
-////			um.setCustomer(c.getString(c.getColumnIndex("Customer")));
-//			StringBuffer sb = new StringBuffer();
-//			sb.append("Customer:" + c.getString(c.getColumnIndex("Customer")) +";");
-//			sb.append("costCode:" + c.getString(c.getColumnIndex("costCode")) +";");
-//			sb.append("ShiptoNumber:" + c.getString(c.getColumnIndex("ShiptoNumber")) +";");
-//			sb.append("ShiptoAddress:" + c.getString(c.getColumnIndex("ShiptoAddress")) +";");
-//			sb.append("ShiptoCity:" + c.getString(c.getColumnIndex("ShiptoCity")) +";");
-//			sb.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
-//			sb.append("ShiptoState:" + c.getString(c.getColumnIndex("ShiptoState")) +";");
-//			sb.append("ShiptoZip:" + c.getString(c.getColumnIndex("ShiptoZip")) +";");
-//			sb.append("OrderTotal:" + c.getString(c.getColumnIndex("OrderTotal")) +";");
-//			sb.append("Warehouse:" + c.getString(c.getColumnIndex("Warehouse")) +";");
-//			sb.append("WorkOrder:" + c.getString(c.getColumnIndex("WorkOrder")) +";");
-//			sb.append("Price:" + c.getString(c.getColumnIndex("Price")) +";");
-//			sb.append("Item:" + c.getString(c.getColumnIndex("Item")) +";");
-//			sb.append("Description:" + c.getString(c.getColumnIndex("Description")) +";");
-//			sb.append("EnterDate:" + c.getString(c.getColumnIndex("EnterDate")) +";");
-//			sb.append("EnterTime:" + c.getString(c.getColumnIndex("EnterTime")) +";");
-//			sb.append("OnOrder:" + c.getString(c.getColumnIndex("OnOrder")) +";");
-//
-//			list.add(sb.toString());		
-////			while(c.moveToNext())
-////			{
-////				um = new UserMaster();
-////				um.setCustName(c.getString(c.getColumnIndex("CustName")));
-////				um.setCustomer(c.getString(c.getColumnIndex("Customer")));
-////				list.add(um);		
-////			}
-//			return list;
-//			
-//		}
-		
-		
+
+			
 		public UserMasterDB()
 		{
 			
@@ -392,6 +344,11 @@ int qtn = 0;
 			db = openOrCreateDatabase("EZsource.db", Context.MODE_PRIVATE, null);
 		}
 
+		/*
+		 * check whether a name exist in database
+		 * column is the property
+		 * row is the word u want to check 
+		 * */
 		public boolean checkexit(String tablename,String row, String column)
 		{
 			Cursor c = db.query(tablename, null, column + " = ?", new String[]{row}, null, null, null);
@@ -408,7 +365,9 @@ int qtn = 0;
 				return false; 
 			}
 		}
-		
+		/*
+		 * query tablename when column = row and column2 = row2
+		 * */
 		public boolean checkexitplus(String tablename,String row, String column,String row2, String column2)
 		{
 			Cursor c = db.query(tablename, null, column + " = ?" + " AND " + column2 + " = ?", new String[]{row,row2}, null, null, null);
@@ -426,6 +385,7 @@ int qtn = 0;
 			}
 		}
 		
+		
 		public String returnDBString(String tablename,String column,String row,String column2,String row2,String returncolumn )
 		{
 			String returnString = null;
@@ -439,21 +399,18 @@ int qtn = 0;
 			return returnString;
 		}
 		
-		public String returnDBStringplus(String tablename, String column, String row, String returncolumn)
-		{
-			String returnString = null;
-			//Log.e("ysy", msg)
+//		public String returnDBStringplus(String tablename, String column, String row, String returncolumn)
+//		{
+//			String returnString = null;
+//			//Log.e("ysy", msg)
+//		
+//			Cursor c  = db.query(tablename,null, column + "= ?",new String[]{row},null,null,null);
+//			if(c.moveToFirst())
+//				returnString = c.getString(c.getColumnIndex(returncolumn));
+//			return returnString;
+//		}
 		
-			Cursor c  = db.query(tablename,null, column + "= ?",new String[]{row},null,null,null);
-			if(c.moveToFirst())
-				returnString = c.getString(c.getColumnIndex(returncolumn));
-			return returnString;
-		}
-		
-		public void setDBString()
-		{
-			
-		}
+
 		
 		public ArrayList<UserMaster> customerNameList(String row)
 		{
@@ -476,6 +433,7 @@ int qtn = 0;
 			
 		}
 		
+		//get a AphaseItemTemplate class
 		AphaseItemTemplate getAphaseItemTemplate()
 		{
 			AphaseItemTemplate aitl = new AphaseItemTemplate();
@@ -506,7 +464,7 @@ int qtn = 0;
 		}
 	}
 	
-
+	//if a string is empty, return true
 	boolean whetherEmpty(String string)
 	{
 		if(string == null)
@@ -583,7 +541,7 @@ int qtn = 0;
 			}).show();
 
 	}
-	
+	//the function with plus used in database handle
 	public  void enteruseridplus(String tempstring)
 	{
 		adialog.cancel();
@@ -715,32 +673,7 @@ int qtn = 0;
 							output.setCustomerNumber(statecustomer);
 							statereturnable = umdb.returnDBString("usermaster", "UserID", stateuserid, "Customer", list.get(which).getCustomer(), "Returnable");
 							Log.e("ysy", "returnable " + statereturnable);
-//							statePrice = umdb.returnDBString("usermaster", "UserID", stateuserid, "Customer", list.get(which).getCustomer(), "Price");
-//							
-//							Log.e("ysy", "price " + statePrice);
-//							
-//							
-//							if(statePrice.equals("Y"))
-//							{
-//								//TODO
-//								statecustomer = "BLANK";
-//							}
-//							else
-//							{
-//								
-//							}
-							
-//							if(statereturnable == "Y")
-//							{
-//								//whether it can be returned?
-//								
-//								showTwoButtonDialog("Returnable transaction?");
-//							}
-//							else if (statereturnable == "N") {
-//								//
-//								
-//							}
-//							showTwoButtonDialog("Returnable transaction?");
+
 							umdb.closeDB();
 							Log.e("ysy", "returnable " + statereturnable);
 							if(statereturnable.equals("Y"))
@@ -869,7 +802,7 @@ int qtn = 0;
 	{
 		if(autocribflag().equals("Y"))
 		{
-			SimpleDateFormat sdf = new SimpleDateFormat("mmddyy");
+			SimpleDateFormat sdf = new SimpleDateFormat("MMddyy");
 	//		cargo.setEnterdate(sdf.format(new java.util.Date()));
 			stateshipdate = sdf.format(new java.util.Date());
 			if(workorderflag().equals("Y"))
@@ -943,7 +876,6 @@ int qtn = 0;
 					return;
 				}
 				workordernumberplus(tempString);
-//				scanitem();
 			}
 		}).show();
 	}
@@ -956,25 +888,7 @@ int qtn = 0;
 		scanitem();
 	}
 	
-//	public void returnableSendItem(String itemNumberString)
-//	{
-//		//find the costomer in the  usermaster to see whether it is returnable customer master 
-//		UserMasterDB umdb = new UserMasterDB();
-//		umdb.openDB();
-//	//	statecustomer = list.get(which).getCustomer();
-//	//	output.setCustomerNumber(statecustomer);
-//	//	statereturnable = umdb.returnDBString("usermaster", "UserID", stateuserid, "Customer", list.get(which).getCustomer(), "Returnable");
-//		umdb.insertReturnableDB(stateitemid);
-//		umdb.closeDB();
-//	}
-//	
-//	public void returnableReturnItem(String itemNumberString)
-//	{
-//		UserMasterDB umdb = new UserMasterDB();
-//		umdb.openDB();
-//		umdb.deleteItemOfReturnableDB(itemNumberString);
-//		umdb.closeDB();
-//	}
+
 	
 	//Item scanning process
 	// state 6
@@ -1294,13 +1208,13 @@ int qtn = 0;
 				cargo.setCustPart("NULL");
 				cargo.setOnOrder("N");
 				cargolist.add(cargo);
-				mSchedule.notifyDataSetChanged();
 
 				if(statereturnable.equals("Y"))
 				{
 					chooseCheckoutOrReturn();
 				}
 				else {
+					mSchedule.notifyDataSetChanged();
 					scanitem();					
 				}
 			}
@@ -1318,21 +1232,27 @@ int qtn = 0;
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				adialog.cancel();
-				
+			//	cargolist.get(cargolist.size()-1).setWeatherTeturn(true);
+			//	String qty = mylist.get(mylist.size()-1).get("qty");
+			//	Log.e("ysy", qty);
+			//	mylist.get(mylist.size()-1).put("qty", "-" + qty);
+				if(checkReturnableItem(stateitemid))
+				{
+					showToast("This item has been sent out, please input the right item");
+					mylist.remove(mylist.size()-1);
+					cargolist.remove(cargolist.size()-1);
+				}
 //				UserMasterDB db = new UserMasterDB();
 //				db.openDB();
 //				try {
-//					
-//					db.insertReturnableDB(stateitemid);
+//					db.deleteItemOfReturnableDB(stateitemid);//;ReturnableDB(stateitemid);
 //				} catch (Exception e) {
 //					e.printStackTrace();
-//					// TODO: handle exception
 //				}
 //				db.closeDB();
-//				mSchedule.notifyDataSetChanged();
-				scanitem();		
+				mSchedule.notifyDataSetChanged();
+				scanitem();			
 			}
 		}).setNegativeButton("RETURNING", new DialogInterface.OnClickListener() {
 			
@@ -1344,8 +1264,9 @@ int qtn = 0;
 				String qty = mylist.get(mylist.size()-1).get("qty");
 				Log.e("ysy", qty);
 				mylist.get(mylist.size()-1).put("qty", "-" + qty);
-				if(checkReturnableItem(stateitemid))
+				if(!checkReturnableItem(stateitemid))
 				{
+					mylist.remove(mylist.size()-1);
 					showToast("This item is not in returnable, please input the right item");
 					cargolist.remove(cargolist.size()-1);
 				}
@@ -1564,8 +1485,9 @@ int qtn = 0;
 	{
 		UserMasterDB umdb = new UserMasterDB();
 		umdb.openDB();
-		boolean tpstate = umdb.checkexit("returnablemaster", "ItemNumber", returnableItemString);
+		boolean tpstate = umdb.checkexit("returnablemaster",  returnableItemString,"ItemNumber");
 		umdb.closeDB();
+		Log.e("ysy", "returnable " + tpstate);
 		return tpstate;
 	}
 	
