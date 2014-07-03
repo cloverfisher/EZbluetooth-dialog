@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-		/*
+
 	//no use now	
 		Button btnSettingButton;
 		btnSettingButton = (Button)findViewById(R.id.btnsetting);
@@ -133,12 +133,12 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 		//		intent.setClass(MainActivity.this, TestActivity.class);
 				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, TestActivity.class);
+				intent.setClass(MainActivity.this, AccountActivity.class);
 				startActivity(intent);
 				
 			}
 		});
-		*/
+		
 	//update the database by the inputfile
 		Button btnDBUpdate;
 		btnDBUpdate = (Button)findViewById(R.id.btndbupdate);
@@ -147,23 +147,23 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				updatedb();
+		//		updatedb();
 				
-//				AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
-//				AlertDialog dialog = ad.setTitle("It will wait mintues to update the database.").setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//					
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) {	
-//						dialog.cancel();
-//						updatedb();
-//					}
-//				}).setNegativeButton("I'll wait next time", new DialogInterface.OnClickListener() {
-//					
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) {
-//
-//					}
-//				}).show();
+				AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+				AlertDialog dialog = ad.setTitle("It will wait mintues to update the database.").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {	
+						dialog.cancel();
+						updatedb();
+					}
+				}).setNegativeButton("next time", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				}).show();
 				
 
 			}
@@ -205,9 +205,9 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		Button btnCostomer;
-		btnCostomer = (Button)findViewById(R.id.btncostomer);
-		btnCostomer.setOnClickListener(new View.OnClickListener() {
+		Button btnPrefix;
+		btnPrefix = (Button)findViewById(R.id.btnprefix);
+		btnPrefix.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -431,7 +431,7 @@ public class MainActivity extends Activity {
 			cv.put("Time", ri.getTime());
 			cv.put("Status", ri.getStatus());
 			cv.put("UOM", ri.getUom());
-			cv.put("UserName", ri.getUserName());
+			cv.put("USERNAME", ri.getUserName());
 			cv.put("ShiptoNumber", ri.getShiptoNumber());
 			cv.put("ShiptoName", ri.getShiptoName());
 			cv.put("WorkOrder", ri.getWortOrder());
@@ -531,31 +531,7 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	private void download()
-	{
-		 Thread t = new Thread(new Runnable() {
 
-		@Override
-		public void run() {
-			try {
-				List<File> files= retrieveAllFiles(AccountActivity.service);
-				Log.e("ysy", files.size() + " ");
-				for(int i=0;i<files.size();i++)
-				{
-					Log.e("ysy", files.get(i).getId());
-					Log.e("ysy", files.get(i).getTitle());
-					Log.e("ysy", files.get(i).getDownloadUrl());
-				}
-			
-				
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		 });
-		 t.start();
-	}
 	
 	// update database
 	  void updatedb()

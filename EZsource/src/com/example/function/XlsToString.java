@@ -26,7 +26,7 @@ public class XlsToString {
 		
 		
 		  String path = Environment.getExternalStorageDirectory().getPath();
-		  path = path + "/Android/data/com.dropbox.android/files/scratch";
+		  path = path + "/download";
 		  File file = new File(path + "/UserMaster.xls");
 
 		  List<UserMaster> list = new ArrayList<UserMaster>();
@@ -64,7 +64,7 @@ public class XlsToString {
 	{
 		  
 		  String path = Environment.getExternalStorageDirectory().getPath();
-		  path = path + "/Android/data/com.dropbox.android/files/scratch";
+		  path = path + "/download";
 		  File file = new File(path + "/CustomerMasterfile.xls");
 		  List<CustomerMasterfile> list = new ArrayList<CustomerMasterfile>();
 		  try{
@@ -93,7 +93,7 @@ public class XlsToString {
 	public List catchAphaseItemTemplate()
 	{
 		  String path = Environment.getExternalStorageDirectory().getPath();
-		  path = path + "/Android/data/com.dropbox.android/files/scratch";
+		  path = path + "/download";
 		  File file = new File(path + "/AphaseItemTemplate.xls");
 		
 		List<AphaseItemTemplate> list = new ArrayList<AphaseItemTemplate>();
@@ -119,7 +119,7 @@ public class XlsToString {
 	{
 		
 		  String path = Environment.getExternalStorageDirectory().getPath();
-		  path = path + "/Android/data/com.dropbox.android/files/scratch";
+		  path = path + "/download";
 		  File file = new File(path + "/ReturnableItems.xls");
 //		String path = Environment.getExternalStorageDirectory().getPath();
 //		File file = new File(path + "/Ezsource/ReturnableItems/ReturnableItems.xls");

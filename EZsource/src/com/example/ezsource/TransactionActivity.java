@@ -3,33 +3,22 @@ package com.example.ezsource;
 
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
 import jxl.write.WriteException;
-import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -37,20 +26,19 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.text.method.DigitsKeyListener;
-import android.util.EventLogTags.Description;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.webkit.JavascriptInterface;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RemoteViews.RemoteView;
+import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,18 +47,12 @@ import com.example.function.GMailSender;
 import com.example.function.StringToXls;
 import com.example.source.AphaseItemTemplate;
 import com.example.source.Cargo;
-import com.example.source.NumberDialog;
 import com.example.source.Output;
 import com.example.source.UserMaster;
-import com.google.android.gms.internal.i;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
-import com.google.api.client.http.FileContent;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.Drive.About.Get;
-import com.google.api.services.drive.model.File;
 
 public class TransactionActivity extends Activity {
 	BluetoothAdapter mBluetoothAdapter;
+	View parentView;
 	UUID uuid;
 	String tempstring ;
 int qtn = 0;
@@ -99,7 +81,7 @@ int qtn = 0;
 	String statePrice = null;
 	String workorder = null;
 	int stateplus = 0;
-	
+	PopupWindow pw;
 	ListView list;
 	//mylist is the this that should be showed in listview
 	ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
@@ -109,7 +91,8 @@ int qtn = 0;
 //	  static final int REQUEST_AUTHORIZATION = 2;
 //	  static final int CAPTURE_IMAGE = 3;
 	
-//	Semaphore semp = new Semaphore(0);
+	Semaphore semp = new Semaphore(0);
+	
 	
 	//a output contain the user and costermer information and many caogo(item) information
 	Output output = new Output();
@@ -206,6 +189,7 @@ int qtn = 0;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_transaction);
 		ins = this;
+		parentView = (View)findViewById(R.id.myTransactionView);
 		if(!getPrefix())
 		{
 			finish();
@@ -258,7 +242,7 @@ int qtn = 0;
 		    runOnUiThread(new Runnable() {
 		      @Override
 		      public void run() {
-		        Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
+		        Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_LONG).show();
 		      }
 		    });
 		  }
@@ -474,6 +458,58 @@ int qtn = 0;
 		return false;
 	}
 	
+	private class showtextThread extends Thread{
+		
+		String titleString;
+		
+		public void setTitle(String title)
+		{
+			this.titleString = title;
+		}
+		@Override
+		public void run(){
+			LayoutInflater li = LayoutInflater.from(TransactionActivity.this);
+			View promptsView = li.inflate(R.layout.msgpopoutwindow, null);
+//			AlertDialog laladialog = new AlertDialog.Builder(TransactionActivity.this).setView(promptsView).setTitle(title).create();
+//			laladialog.setCanceledOnTouchOutside(false);
+//			laladialog.show();
+			TextView tView = (TextView)promptsView.findViewById(R.id.popuptext);
+			Button button = (Button)promptsView.findViewById(R.id.popupbutton);
+			pw = new PopupWindow(promptsView,100, 100,true);
+
+			tView.setText(titleString);
+			button.setOnClickListener(new OnClickListener() {
+				
+				public void onClick(View v) {
+					pw.dismiss();
+					semp.release();
+					// TODO Auto-generated method stub
+					
+				}
+			});	
+			pw.showAtLocation(findViewById(R.id.myTransactionView), Gravity.CENTER, 0, 0);
+			super.run();
+		}
+		
+	}
+	
+	public void showtextDialog(String title)
+	{
+		showtextThread stThread = new showtextThread();
+		stThread.setTitle(title);
+		stThread.start();
+		try {
+			semp.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+
+	}
+	
+	
 	//state = 1
 	AlertDialog adialog;
 	public void enteruserid()
@@ -504,14 +540,17 @@ int qtn = 0;
 			adialog = 	ad.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		               // User clicked OK button
+		        	   adialog.cancel();
+		        	   adialog.dismiss();
 		        	   tempstring = et.getText().toString();
 		        	   if(whetherEmpty(tempstring))
 		        	   {
-		        		   showToast("empty userID");
+		        		  // ins.showtextDialog("empty");
+		        		showToast("empty userID");
 		        		   ins.enteruserid();
 		        		   return;
 		        	   }
-		        	   adialog.cancel();
+
 		        	   Log.e("ysy", tempstring);
 		 //       	   this.state = ENTERPIN;
 		        	   if(checkUserID(tempstring))
@@ -825,7 +864,7 @@ int qtn = 0;
 			umdb.openDB();
 			String stateAutoCrib = umdb.returnDBString("customermaster", "Customer", statecustomer, "ShiptoNumber", stateshiptonumer, "Autocrib");//("customermaster", "Customer", statecustomer,"Autocrib");
 			umdb.closeDB();
-			Toast.makeText(TransactionActivity.this, "AutoCribNum is " + stateAutoCrib, Toast.LENGTH_LONG).show();
+		//	Toast.makeText(TransactionActivity.this, "AutoCribNum is " + stateAutoCrib, Toast.LENGTH_LONG).show();
 			Log.e("ysy", "autocrib"+stateAutoCrib);
 			return stateAutoCrib;
 	}
@@ -837,7 +876,7 @@ int qtn = 0;
 				String stateAutoCrib = umdb.returnDBString("customermaster", "Customer", statecustomer, "ShiptoNumber", stateshiptonumer, "SRM");
 				//String stateAutoCrib = umdb.returnDBStringplus("customermaster", "Customer", statecustomer,"SRM");
 				umdb.closeDB();
-				Toast.makeText(TransactionActivity.this, "SRM is " + stateAutoCrib, Toast.LENGTH_LONG).show();
+	//			Toast.makeText(TransactionActivity.this, "SRM is " + stateAutoCrib, Toast.LENGTH_LONG).show();
 				return stateAutoCrib;
 	}
 	public String workorderflag()
@@ -847,7 +886,7 @@ int qtn = 0;
 		String stateWorkerString = umdb.returnDBString("customermaster", "Customer", statecustomer, "ShiptoNumber",stateshiptonumer, "WorkOrder");
 		//String stateWorkerString = umdb.returnDBStringplus("customermaster", "Customer", statecustomer,  "WorkOrder");
 		umdb.closeDB();
-		Toast.makeText(TransactionActivity.this, "worker order is " + stateWorkerString, Toast.LENGTH_LONG).show();
+	//	Toast.makeText(TransactionActivity.this, "worker order is " + stateWorkerString, Toast.LENGTH_LONG).show();
 		return stateWorkerString;
 	}
 	
@@ -1239,18 +1278,11 @@ int qtn = 0;
 			//	mylist.get(mylist.size()-1).put("qty", "-" + qty);
 				if(checkReturnableItem(stateitemid))
 				{
-					showToast("This item has been sent out, please input the right item");
+
+					//showToast("This item has been sent out, please input the right item");
 					mylist.remove(mylist.size()-1);
 					cargolist.remove(cargolist.size()-1);
 				}
-//				UserMasterDB db = new UserMasterDB();
-//				db.openDB();
-//				try {
-//					db.deleteItemOfReturnableDB(stateitemid);//;ReturnableDB(stateitemid);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				db.closeDB();
 				mSchedule.notifyDataSetChanged();
 				scanitem();			
 			}
@@ -1365,9 +1397,11 @@ int qtn = 0;
 			}
 			  String astring =Environment.getExternalStorageDirectory().getPath()  +java.io.File.separator+"Ezsource/"+name;; 
 			try{
-				GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
+				GMailSender sender = new GMailSender("ezsourcesending@gmail.com", "sending78");
 		//		GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
-				sender.sendMail("bla", "bla", "yuysyu@gmail.com", "yuysyu@gmail.com",astring,name);
+				SharedPreferences email = getSharedPreferences("outputemail", 0);
+				final String emailString = email.getString("outputemail", "ezsourcesending@gmail.com");
+				sender.sendMail("output", "output", "ezsourcesending@gmail.com", "yuysyu@gmail.com",astring,name);
 			}
 			catch(Exception e)
 			{
@@ -1391,12 +1425,7 @@ int qtn = 0;
 			        @Override  
 			        public void onDateSet(DatePicker datePicker,   
 			                int year, int month, int dayOfMonth) {  
-//			            EditText editText =   
-//			                (EditText) findViewById(R.id.editText);  
-//			             //Calendar月份是从0开始,所以month要加1  
-//			            editText.setText("你选择了" + year + "年" +   
-//			                    (month+1) + "月" + dayOfMonth + "日");  
-			        //	dialog.cancel();
+
 			        	dialog.dismiss();
 			       // 	dialog.
 			        	Log.e("ysy", "ondatesetlisterner");

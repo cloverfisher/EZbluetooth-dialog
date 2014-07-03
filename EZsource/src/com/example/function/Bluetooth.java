@@ -237,53 +237,7 @@ public class Bluetooth extends Application{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		 * Handler
-		 * */
-//		Handler handler = new Handler()
-//		{
-//			
-//		    public void handleMessage(Message msg) {
-//		    	Log.e("ysy", "msg"+ msg.what);
-//		        switch (msg.what) {
-//		        case 1: //state 1
-//		        {
-//		        	tempstring = msg.obj.toString();
-//		        	enteruseridplus(tempstring);
-//		        	break;
-//		        }
-//		        case 2:
-//		        {
-//		        	Log.e("ysy", "enterpin");
-//		        	tempstring = msg.obj.toString();
-//		        	enteruserpinplus(tempstring);
-//
-//		        	break;
-//		        }
-//		        case 4:
-//		        {
-//		        	tempstring = msg.obj.toString();
-//		        	entershiptoplus(tempstring);
-//		        	break;
-//		        }
-//		        case 5:
-//		        {
-//		         	tempstring = msg.obj.toString();
-//		        	workordernumberplus(tempstring);
-//		        	break;
-//		        }
-//		        case 6:
-//		        {
-//		        	tempstring = msg.obj.toString();
-//		        	scanitemplus(tempstring);
-//		        	break;
-//		        }
-//		      }
-//			    super.handleMessage(msg); 
-//		    }
-//		};
-//		ConnectedThread connectedThread = new ConnectedThread(clientThread.mmSocket,handler);
-//		connectedThread.start();	
+
 
 	}	
 	

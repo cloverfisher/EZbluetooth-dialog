@@ -8,12 +8,20 @@ import java.util.Locale;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -26,115 +34,65 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 
 public class AccountActivity extends Activity {
-  static final int REQUEST_ACCOUNT_PICKER = 1;
-  static final int REQUEST_AUTHORIZATION = 2;
-  static final int CAPTURE_IMAGE = 3;
 
-  private static Uri fileUri;
-  public static Drive service;
-  private GoogleAccountCredential credential;
-
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
-    credential = GoogleAccountCredential.usingOAuth2(this, Arrays.asList(DriveScopes.DRIVE_FILE));
-    startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
-  }
-
-  @Override
-  protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-    switch (requestCode) {
-    case REQUEST_ACCOUNT_PICKER:
-      if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
-        String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-        if (accountName != null) {
-          credential.setSelectedAccountName(accountName);
-          service = getDriveService(credential);
-    //      startCameraIntent();
-        }
-      }
-      break;
-    case REQUEST_AUTHORIZATION:
-      if (resultCode == Activity.RESULT_OK) {
-    //    saveFileToDrive();
-      } else {
-        startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
-      }
-      break;
-    case CAPTURE_IMAGE:
-      if (resultCode == Activity.RESULT_OK) {
-   //     saveFileToDrive();
-      }
-    }
-  }
-
-  private void startCameraIntent() {
-    String mediaStorageDir = Environment.getExternalStoragePublicDirectory(
-        Environment.DIRECTORY_PICTURES).getPath();
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-    fileUri = Uri.fromFile(new java.io.File(mediaStorageDir + java.io.File.separator + "IMG_"
-        + timeStamp + ".jpg"));
-
- //   Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-  //  cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-  //  startActivityForResult(cameraIntent, CAPTURE_IMAGE);
-  }
-
-  private void saveFileToDrive() {
-    Thread t = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          // File's binary content
-//          java.io.File fileContent = new java.io.File(fileUri.getPath());
-//          
-//          
-//          FileContent mediaContent = new FileContent("image/jpeg", fileContent);
-//
-//          // File's metadata.
-//          File body = new File();
-//          body.setTitle(fileContent.getName());
-//          body.setMimeType("image/jpeg");
-//
-//          File file = service.files().insert(body, mediaContent).execute();
-          
-          File body = new File();
-          body.setTitle("My document");
-          body.setDescription("A test document");
-          body.setMimeType("text/plain");
-          
-          String path = Environment.getExternalStorageDirectory().getPath();
-	//	  File file = new File(path + "/Ezsource/UserMaster");
-          java.io.File fileContent1 = new java.io.File(path + "/b.txt");
-          FileContent mediaContent = new FileContent("text/plain", fileContent1);
-
-          File file = service.files().insert(body, mediaContent).execute();
-          if (file != null) {
-            showToast("Photo uploaded: " + file.getTitle());
-            Log.e("ysy", "uploaded");
-            startCameraIntent();
-          }
-          else {
-        	  showToast("Photo not uploaded: ");
-        	  Log.e("ysy", "notuploaded");
+	AlertDialog.Builder ad;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		ad =new AlertDialog.Builder(this);
+		setContentView(R.layout.activity_costomercode);
+		
+		final TextView tv = (TextView)findViewById(R.id.costomercode);
+		TextView tv0 = (TextView)findViewById(R.id.prftext);
+		tv0.setText("output email");	
+		SharedPreferences email = getSharedPreferences("outputemail", 0);
+		final String emailString = email.getString("outputemail", "ezsourcesending@gmail.com");
+		if(emailString.equals("ezsourcesending@gmail.com"))
+			tv.setText("ezsourcesending@gmail.com");
+		else {
+			tv.setText(emailString);
 		}
-        } catch (UserRecoverableAuthIOException e) {
-        	Log.e("ysy", "UserRecoverableAuthIOException");
-        	e.printStackTrace();
-   //       startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    });
-    t.start();
-  }
+		
+		Button button = (Button)findViewById(R.id.resetbutton);
+		button.setOnClickListener(new View.OnClickListener() {
 
-  private Drive getDriveService(GoogleAccountCredential credential) {
-    return new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
-        .build();
-  }
+		
+		//String test = eText.getText()
+		
+		
+			@Override
+			public void onClick(View v) {
+				LayoutInflater li = LayoutInflater.from(AccountActivity.this);//.from(this);
+				View promptsView = li.inflate(R.layout.costomerdialog, null);
+				final EditText eText = (EditText)promptsView.findViewById(R.id.editTextcostomercode);
+				ad.setTitle("enter the outputemail").setView(promptsView).setPositiveButton("ok", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						String outputemailString = eText.getText().toString();
+						SharedPreferences setting = getSharedPreferences("outputemail", 0);
+						SharedPreferences.Editor editor = setting.edit();
+						editor.putString("outputemail", outputemailString);
+						editor.commit();
+						Log.e("ysy", ""  + outputemailString);
+						tv.setText(outputemailString);
+					}
+				}).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						
+					}
+				}).show();
+				
+				
+			}
+		});
+	}
+
 
   public void showToast(final String toast) {
     runOnUiThread(new Runnable() {

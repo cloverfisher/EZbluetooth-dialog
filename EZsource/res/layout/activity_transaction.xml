@@ -1,11 +1,16 @@
+
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent" 
+    android:id="@+id/myTransactionView">
 
     <TableRow
         android:id="@+id/tableRow1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
+
+
+
     </TableRow>
 
     <ListView
@@ -13,5 +18,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>
+            <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Longclick item to delete it. scan '~DELETE''~DONE''~NEXT~ORDER' to continue" />    
+
 
 </TableLayout>

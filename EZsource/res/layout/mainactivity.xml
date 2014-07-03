@@ -52,16 +52,16 @@
             android:text="transaction history" />
 
         <Button
-            android:id="@+id/btncostomer"
+            android:id="@+id/btnprefix"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Customer Code entry" />
+            android:text="prefix Code entry" />
 
-        <Button
+<!--         <Button
             android:id="@+id/button8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Button" /> -->
         </LinearLayout>
 
     </ScrollView>
