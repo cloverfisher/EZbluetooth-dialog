@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
+import jxl.read.biff.BiffException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.example.function.XlsToString;
 import com.example.source.AphaseItemTemplate;
 import com.example.source.CustomerMasterfile;
+import com.example.source.MyException;
 import com.example.source.Output;
 import com.example.source.ReturnableItem;
 import com.example.source.UserMaster;
@@ -133,7 +135,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 		//		intent.setClass(MainActivity.this, TestActivity.class);
 				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, AccountActivity.class);
+				intent.setClass(MainActivity.this, EmailActivity.class);
 				startActivity(intent);
 				
 			}
@@ -548,49 +550,61 @@ public class MainActivity extends Activity {
 				public void run() {
 					newDb.openDB();
 					newDb.buildDB();
-
+					Log.e("ysy", "what the hell");
 					 XlsToString xts = new XlsToString();
 					 try {
 						umlist =  xts.catchUsermaster();
 						cmlist = xts.catchCustomermaster();
 						rilist = xts.catchReturnableItem();
 						aitlist = xts.catchAphaseItemTemplate();
-
-					} catch (Exception ea) {
-						// TODO: handle exception
+						int umlistsie = umlist.size();
+						int cmlistsize = cmlist.size();
+						int aitlistsize = aitlist.size();
+						int rilistsize = rilist.size();
+						Log.e("ysy", "item set size = "+aitlistsize);
+						barProgressDialog.setMax(umlistsie);
+						
+						for(int i = 0; i < umlistsie; i++)
+						{
+							barProgressDialog.setProgress(i);
+							newDb.insertUserMasterDB(umlist.get(i));
+						}
+						for(int i = 0;i <  cmlistsize;i++)
+						{
+							barProgressDialog.setProgress(i);
+							newDb.insertCustomerMasterDB(cmlist.get(i));
+						}
+						for(int i = 0; i < rilistsize ; i++)
+						{
+							barProgressDialog.setProgress(i);
+							newDb.insertReturnableItemDB(rilist.get(i));
+							Log.e("ysy", "return " + i);
+						}
+						for(int i=0; i < aitlistsize ; i++)
+						{
+							barProgressDialog.setProgress(i);
+							newDb.insertItemDB(aitlist.get(i));
+							Log.e("ysy", "item" + i);
+						}
+					} catch (MyException e) {
+						showToast(e.toString());
+						Thread.currentThread().interrupt();
+					//	finish();
+					}catch (IOException e) {
+						showToast(e.toString());
+						Thread.currentThread().interrupt();
+					//	finish();
+					}catch (BiffException e) {
+						showToast(e.toString());
+						Thread.currentThread().interrupt();
+					//	finish();
 					}
-					int umlistsie = umlist.size();
-					int cmlistsize = cmlist.size();
-					int aitlistsize = aitlist.size();
-					int rilistsize = rilist.size();
-					Log.e("ysy", "item set size = "+aitlistsize);
-					barProgressDialog.setMax(umlistsie);
-					
-					for(int i = 0; i < umlistsie; i++)
-					{
-						barProgressDialog.setProgress(i);
-						newDb.insertUserMasterDB(umlist.get(i));
-					}
-					for(int i = 0;i <  cmlistsize;i++)
-					{
-						barProgressDialog.setProgress(i);
-						newDb.insertCustomerMasterDB(cmlist.get(i));
-					}
-					for(int i = 0; i < rilistsize ; i++)
-					{
-						barProgressDialog.setProgress(i);
-						newDb.insertReturnableItemDB(rilist.get(i));
-						Log.e("ysy", "return " + i);
-					}
-					for(int i=0; i < aitlistsize ; i++)
-					{
-						barProgressDialog.setProgress(i);
-						newDb.insertItemDB(aitlist.get(i));
-						Log.e("ysy", "item" + i);
-					}
+					 Log.e("finish", "???");
 				//	pdialog.cancel();
 					newDb.closeDB();
-					
+					Thread.currentThread().interrupt();
+					barProgressDialog.dismiss();
+					barProgressDialog.cancel();
 				}
 				
 			}).start();
@@ -627,6 +641,14 @@ public class MainActivity extends Activity {
 		    return result;
 		  }
 
-	
+		// show the toast message
+	  public void showToast(final String toast) {
+		    runOnUiThread(new Runnable() {
+		      @Override
+		      public void run() {
+		        Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_LONG).show();
+		      }
+		    });
+		  }
 	
 }

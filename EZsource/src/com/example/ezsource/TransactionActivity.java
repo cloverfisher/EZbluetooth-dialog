@@ -194,8 +194,13 @@ int qtn = 0;
 		{
 			finish();
 		}
-
-
+		UserMasterDB db = new UserMasterDB();
+		List emaillist =db.getEmailDB(); 
+		if(emaillist == null)
+		{
+			showToast("Please input a email in the account");
+			finish();
+		}
 		ad =new AlertDialog.Builder(this);
 
 	    ins.enteruserid();
@@ -286,6 +291,35 @@ int qtn = 0;
 				db.insert("outputmaster", null, cv);
 			}
 					
+		}
+		
+		public List getEmailDB()
+		{
+			this.openDB();
+			Cursor c = db.query("emaildatabase", null, null, null, null, null, null);
+			List<String> aList = new ArrayList<String>();
+			//String s[] = new String;
+			String returnString="";
+			if(!c.moveToFirst())
+			{
+				this.closeDB();
+				return null;
+			}
+			else {
+				returnString = c.getString(c.getColumnIndex("email"));
+				Log.e("ysy", returnString);
+				//int i = 0;
+				aList.add(returnString);
+		//		s[i] = returnString;
+				while(c.moveToNext())
+				{
+					returnString = c.getString(c.getColumnIndex("email"));
+					aList.add(returnString);
+				}
+				this.closeDB();
+
+				return aList;
+			}
 		}
 		
 		public void insertReturnableDB(String itemNumberString)
@@ -1379,7 +1413,7 @@ int qtn = 0;
 		seThread.start();
 
 	}
-	
+
 	private class SendEmailThread extends Thread{
 
 		String name;
@@ -1387,6 +1421,8 @@ int qtn = 0;
 		{
 			this.name = aname;
 		}
+		
+	
 		@Override
 		public void run() {
 			try {
@@ -1399,9 +1435,28 @@ int qtn = 0;
 			try{
 				GMailSender sender = new GMailSender("ezsourcesending@gmail.com", "sending78");
 		//		GMailSender sender = new GMailSender("yuysyu@gmail.com", "g1heart2love");
-				SharedPreferences email = getSharedPreferences("outputemail", 0);
-				final String emailString = email.getString("outputemail", "ezsourcesending@gmail.com");
-				sender.sendMail("output", "output", "ezsourcesending@gmail.com", "yuysyu@gmail.com",astring,name);
+		//		SharedPreferences email = getSharedPreferences("outputemail", 0);
+//				final String emailString = email.getString("outputemail", "ezsourcesending@gmail.com");
+//				sender.sendMail("output", "output", "ezsourcesending@gmail.com", emailString,astring,name);
+				
+				UserMasterDB db = new UserMasterDB();
+				
+				List emList =db.getEmailDB(); 
+				String emailString = "";
+				if(emList == null)
+				{
+					showToast("Please input a email in the account");
+				}
+				else {
+					int i = 0;
+					for(;i<emList.size()-1;i++)
+					{
+						emailString = emailString + emList.get(i) + ",";
+					}
+					emailString = emailString + emList.get(i);
+				}
+				
+				sender.sendMail("output", "output", "ezsourcesending@gmail.com", emailString,astring,name);
 			}
 			catch(Exception e)
 			{

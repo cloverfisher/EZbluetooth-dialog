@@ -7,8 +7,11 @@
 # view AndroidManifest.xml #generated:43
 -keep class com.example.ezsource.CostomerCodeActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:47
+# view AndroidManifest.xml #generated:49
 -keep class com.example.ezsource.DBqueryActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:46
+-keep class com.example.ezsource.EmailActivity { <init>(...); }
 
 # view AndroidManifest.xml #generated:34
 -keep class com.example.ezsource.HistoryActivity { <init>(...); }
@@ -22,6 +25,6 @@
 # view AndroidManifest.xml #generated:24
 -keep class com.example.ezsource.TransactionActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:50
+# view AndroidManifest.xml #generated:52
 -keep class com.example.function.BluetoothService { <init>(...); }
 

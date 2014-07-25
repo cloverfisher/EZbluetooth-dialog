@@ -41,9 +41,11 @@
             android:name="com.example.ezsource.TestActivity">
         </activity>  
         <activity 
-            android:name="com.example.ezsource.CostomerCodeActivity">
-            
+            android:name="com.example.ezsource.CostomerCodeActivity">    
         </activity>       
+                <activity 
+            android:name="com.example.ezsource.EmailActivity">          
+        </activity>     
         <activity 
             android:name="com.example.ezsource.DBqueryActivity">
         </activity>

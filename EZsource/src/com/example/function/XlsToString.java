@@ -7,11 +7,12 @@ import java.util.List;
 
 import com.example.source.AphaseItemTemplate;
 import com.example.source.CustomerMasterfile;
+import com.example.source.MyException;
 import com.example.source.ReturnableItem;
 import com.example.source.UserMaster;
+import com.google.android.gms.internal.ex;
 
 import jxl.*;
-
 import jxl.read.biff.BiffException;
 import android.os.Environment;
 import android.util.Log;
@@ -20,18 +21,56 @@ import android.util.Log;
 //transfer excel file to string
 public class XlsToString {
 	
-	
-	public List catchUsermaster() throws BiffException, IOException
+	public File getFilePath(String str) throws MyException
 	{
 		
-		
 		  String path = Environment.getExternalStorageDirectory().getPath();
-		  path = path + "/download";
-		  File file = new File(path + "/UserMaster.xls");
+		//  path = path + "/Download";
+		  File file = new File(path+"/Download");
+		  Log.e("ysy", "Download" + file.exists());
+		  if(!file.exists())
+		  {
+			  path = path+"/download";
+		  }
+		  else
+		  {
+			  path = path+"/Download";
+		  }
+		  File file1 = new File(path + str + ".xls");
+		  File file2 = new File(path + str + ".xlsx");
+		  Log.e("ysy", file1.getPath());
+		  if(file1.exists()&&file2.exists())
+		  {
+			  Log.e("ysy", "1");
+			  throw new MyException("There are both xls file and xlsx file please delete one");
+		  }
+		  else if(!(file1.exists()||file2.exists()))
+		  {
+			  Log.e("ysy", "2");
+			  throw new MyException("the" + str +"file is not exist");
+		  }
+		  else if(file1.exists())
+		  {
+			  Log.e("ysy", "3");
+			  return file1;
+		  }
+		  else if(file2.exists())
+		  {
+			  Log.e("ysy", "4");
+			  return file2;
+		  }
+		  return null;
+		  
+	}
+	
+	
+	public List catchUsermaster() throws BiffException, IOException,MyException
+	{
+		
+
 
 		  List<UserMaster> list = new ArrayList<UserMaster>();
-		
-		  try{
+		  File file = getFilePath("/UserMaster");
 			  Workbook rwb  = Workbook.getWorkbook(file);
 			  Sheet rs = rwb.getSheet(0);
 	//		  Cell c00 = rs.getCell(0, 0);
@@ -50,24 +89,17 @@ public class XlsToString {
 						  cc[5].getContents()) ;
 				  list.add(um);
 			  }
-		  }
-		  catch(Exception e)
-		  {
-			  e.printStackTrace();
-				Log.e("ysy ", e.toString());		  
-		  }
+
 		  return list;
 	}
 	
 	
-	public List catchCustomermaster() throws BiffException, IOException
+	public List catchCustomermaster() throws BiffException, IOException, MyException
 	{
 		  
-		  String path = Environment.getExternalStorageDirectory().getPath();
-		  path = path + "/download";
-		  File file = new File(path + "/CustomerMasterfile.xls");
+		 File file = getFilePath("/CustomerMasterfile");
+	//	  File file = new File(path + "/CustomerMasterfile.xls");
 		  List<CustomerMasterfile> list = new ArrayList<CustomerMasterfile>();
-		  try{
 			  Workbook  rwb = Workbook.getWorkbook(file);
 			  Sheet rs = rwb.getSheet(0);
 	//		  Cell c00 = rs.getCell(0, 0);
@@ -82,22 +114,14 @@ public class XlsToString {
 
 				  list.add(cm);
 			  }
-		  }
-		  catch(Exception e)
-		  {
-				Log.e("ysy ", e.toString());		  
-		  }
+	  
 		  return list;
 	}
 	
-	public List catchAphaseItemTemplate()
+	public List catchAphaseItemTemplate() throws BiffException, IOException,MyException
 	{
-		  String path = Environment.getExternalStorageDirectory().getPath();
-		  path = path + "/download";
-		  File file = new File(path + "/AphaseItemTemplate.xls");
-		
+		 File file = getFilePath("/AphaseItemTemplate");
 		List<AphaseItemTemplate> list = new ArrayList<AphaseItemTemplate>();
-		try {
 			Workbook rwb = Workbook.getWorkbook(file);
 			Sheet rs = rwb.getSheet(0);
 			int rowsnum = rs.getRows();
@@ -108,24 +132,15 @@ public class XlsToString {
 				AphaseItemTemplate ait = new AphaseItemTemplate(cc);
 				list.add(ait);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			// TODO: handle exception
-		}
+
 		return list;
 	}
 	
-	public List catchReturnableItem()
+	public List catchReturnableItem()throws BiffException, IOException,MyException
 	{
-		
-		  String path = Environment.getExternalStorageDirectory().getPath();
-		  path = path + "/download";
-		  File file = new File(path + "/ReturnableItems.xls");
-//		String path = Environment.getExternalStorageDirectory().getPath();
-//		File file = new File(path + "/Ezsource/ReturnableItems/ReturnableItems.xls");
+		 File file = getFilePath("/ReturnableItems");
 		Workbook rwb;
 		List<ReturnableItem> list = new ArrayList<ReturnableItem>();
-		try{
 			rwb = Workbook.getWorkbook(file);
 			Sheet rs = rwb.getSheet(0);
 			int rowsnum = rs.getRows();
@@ -137,11 +152,6 @@ public class XlsToString {
 				ReturnableItem rItem = new ReturnableItem(cc);
 				list.add(rItem);
 			}
-		}
-		catch(Exception e)
-		{
-			Log.e("ysy ", e.toString());		
-		}
 		return list;
 		
 	}
